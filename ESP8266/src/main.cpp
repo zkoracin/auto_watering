@@ -2,28 +2,23 @@
 #include <ESP8266WebServer.h>
 #include "config/config.h"
 #include "core/wifi_manager.h"
+#include "core/cors.h"
 
 ESP8266WebServer server(80);
 
-void sendCorsHeaders() {
-  server.sendHeader("Access-Control-Allow-Origin", "*");
-  server.sendHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
-  server.sendHeader("Access-Control-Allow-Headers", "*");
-}
-
 void handleRoot() {
-  sendCorsHeaders();
+  sendCorsHeaders(server);
   server.send(200, "text/plain", "Hello from ESP8266!");
 }
 
 void handleStatus() {
-  sendCorsHeaders();
+  sendCorsHeaders(server);
   String msg = "ESP8266 is running\n";
   msg += "IP: " + WiFi.localIP().toString();
   server.send(200, "text/plain", msg);
 }
 void handleOptions() {
-  sendCorsHeaders();
+  sendCorsHeaders(server);
   server.send(204);
 }
 
