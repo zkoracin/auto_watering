@@ -24,7 +24,7 @@ class _EspConnectionCardState extends State<EspConnectionCard> {
     }
   }
 
-   @override
+  @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     return Card(

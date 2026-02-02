@@ -1,4 +1,3 @@
-
 import 'package:client/theme/app_color_scheme.dart';
 import 'package:client/theme/app_colors.dart';
 import 'package:flutter/material.dart';
@@ -16,6 +15,5 @@ class AppTheme {
       bodyMedium: GoogleFonts.lato(color: AppColors.textPrimary),
       bodySmall: GoogleFonts.lato(color: AppColors.textSecondary),
     ),
-    
   );
 }

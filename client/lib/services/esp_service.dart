@@ -5,13 +5,11 @@ class EspService {
   final String baseUrl;
 
   EspService() : baseUrl = dotenv.env['BASE_URL']!;
-  
+
   Duration timeout = const Duration(seconds: 3);
 
   Future<void> testConnection() async {
-    final response = await http
-        .get(Uri.parse(baseUrl))
-        .timeout(timeout);
+    final response = await http.get(Uri.parse(baseUrl)).timeout(timeout);
     if (response.statusCode != 200) {
       throw Exception('ESP not reachable');
     }

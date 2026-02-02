@@ -7,23 +7,20 @@ class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
-  builder: (context, constraints) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 600),
-          child: const Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              EspConnectionCard(),
-            ],
+      builder: (context, constraints) {
+        return SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 600),
+              child: const Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [EspConnectionCard()],
+              ),
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
-  },
-);
-
   }
 }
