@@ -1,6 +1,7 @@
 #include <ESP8266WiFi.h>
 #include <ESP8266WebServer.h>
-#include "wifi_credentials.h"
+#include "config/config.h"
+#include "core/wifi_manager.h"
 
 ESP8266WebServer server(80);
 
@@ -27,21 +28,12 @@ void handleOptions() {
 }
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(SERIAL_BAUD);
   delay(1000);
 
   Serial.println();
   Serial.println("Connecting to WiFi...");
-  WiFi.begin(ssid, password);
-
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(500);
-    Serial.print(".");
-  }
-
-  Serial.println("\nWiFi connected");
-  Serial.print("IP address: ");
-  Serial.println(WiFi.localIP());
+  connectWiFi();
 
   server.on("/", HTTP_GET, handleRoot);
   server.on("/", HTTP_OPTIONS, handleOptions);
