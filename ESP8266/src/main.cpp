@@ -11,6 +11,8 @@ void setup() {
   Serial.begin(SERIAL_BAUD);
   delay(1000);
 
+  pumpInit();
+
   Serial.println();
   Serial.println("Connecting to WiFi...");
   connectWiFi();
