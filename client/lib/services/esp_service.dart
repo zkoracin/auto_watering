@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 
@@ -5,13 +6,11 @@ class EspService {
   final String baseUrl;
 
   EspService() : baseUrl = dotenv.env['BASE_URL']!;
-  
+
   Duration timeout = const Duration(seconds: 3);
 
   Future<void> testConnection() async {
-    final response = await http
-        .get(Uri.parse(baseUrl))
-        .timeout(timeout);
+    final response = await http.get(Uri.parse(baseUrl)).timeout(timeout);
     if (response.statusCode != 200) {
       throw Exception('ESP not reachable');
     }
@@ -27,5 +26,13 @@ class EspService {
     }
 
     return response.body;
+  }
+
+  Future<bool> fetchPumpStatus() async {
+    await Future.delayed(const Duration(seconds: 1));
+    const fakeJson = '{"pumpOn": true}';
+
+    final data = jsonDecode(fakeJson);
+    return data['pumpOn'] as bool? ?? false;
   }
 }

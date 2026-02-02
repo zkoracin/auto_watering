@@ -15,7 +15,7 @@ extension EspConnectionStateExtension on EspConnectionState {
         return 'ESP Connection';
     }
   }
-  
+
   Icon icon(ColorScheme colors) {
     switch (this) {
       case EspConnectionState.success:
