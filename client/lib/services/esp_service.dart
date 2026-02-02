@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 
@@ -25,5 +26,13 @@ class EspService {
     }
 
     return response.body;
+  }
+
+  Future<bool> fetchPumpStatus() async {
+    await Future.delayed(const Duration(seconds: 1));
+    const fakeJson = '{"pumpOn": true}';
+
+    final data = jsonDecode(fakeJson);
+    return data['pumpOn'] as bool? ?? false;
   }
 }
