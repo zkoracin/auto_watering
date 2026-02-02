@@ -1,5 +1,5 @@
 import 'package:client/buttons/power_button.dart';
-import 'package:client/services/esp_service.dart';
+import 'package:client/services/pump_service.dart';
 import 'package:flutter/material.dart';
 
 class StatusPage extends StatefulWidget {
@@ -10,7 +10,7 @@ class StatusPage extends StatefulWidget {
 }
 
 class _StatusPageState extends State<StatusPage> {
-  final EspService _espService = EspService();
+  final PumpService _pumpService = PumpService();
   bool _pumpOn = false;
   bool _loading = true;
 
@@ -23,9 +23,9 @@ class _StatusPageState extends State<StatusPage> {
   Future<void> _loadPumpStatus() async {
     setState(() => _loading = true);
     try {
-      final status = await _espService.fetchPumpStatus();
+      final status = await _pumpService.fetchPumpStatus();
       setState(() {
-        _pumpOn = status;
+        _pumpOn = status.pumpOn;
         _loading = false;
       });
     } catch (e) {
@@ -34,8 +34,19 @@ class _StatusPageState extends State<StatusPage> {
     }
   }
 
-  void _togglePump() {
-    setState(() => _pumpOn = !_pumpOn);
+  Future<void> _togglePump() async {
+    setState(() => _loading = true);
+
+    try {
+      final statusDto = await _pumpService.togglePump();
+      setState(() {
+        _pumpOn = statusDto.pumpOn;
+        _loading = false;
+      });
+    } catch (e) {
+      debugPrint('Failed to toggle pump: $e');
+      setState(() => _loading = false);
+    }
   }
 
   @override
@@ -46,7 +57,6 @@ class _StatusPageState extends State<StatusPage> {
           : PowerButton(
               isOn: _pumpOn,
               onPressed: () async {
-                await Future.delayed(const Duration(seconds: 1));
                 _togglePump();
               },
             ),

@@ -17,7 +17,7 @@ class _EspConnectionCardState extends State<EspConnectionCard> {
     setState(() => _state = EspConnectionState.testing);
 
     try {
-      await _espService.testConnection();
+      await _espService.getStatus();
       setState(() => _state = EspConnectionState.success);
     } catch (_) {
       setState(() => _state = EspConnectionState.failure);
