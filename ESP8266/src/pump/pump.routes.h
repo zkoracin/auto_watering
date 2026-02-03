@@ -55,4 +55,17 @@ inline void registerPumpRoutes(ESP8266WebServer& server) {
     doc["seconds"] = pumpStorageLoadExecutionTime();
     sendJson(server, 200, doc);
   });
+
+  server.on("/pump/run", HTTP_POST, [&]() {
+    StaticJsonDocument<100> doc;
+
+    uint16_t seconds = pumpStorageLoadExecutionTime();
+    pumpRunForSeconds(seconds);
+
+    doc["pumpOn"] = pumpState();
+    doc["seconds"] = seconds;
+
+    sendJson(server, 200, doc);
+  });
+
 }
