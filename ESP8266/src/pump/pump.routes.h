@@ -8,30 +8,15 @@
 
 inline void registerPumpRoutes(ESP8266WebServer& server) {
   server.on("/pump", HTTP_GET, [&]() {
-    sendCorsHeaders(server);
     StaticJsonDocument<100> doc;
     doc["pumpOn"] = pumpState();
     sendJson(server, 200, doc);
   });
 
   server.on("/pump", HTTP_PUT, [&]() {
-    sendCorsHeaders(server);
-
-    if (!server.hasArg("plain")) {
-      StaticJsonDocument<100> doc;
-      doc["error"] = "Missing body";
-      sendJson(server, 400, doc);
-      return;
-    }
-
     StaticJsonDocument<100> body;
-    if (deserializeJson(body, server.arg("plain")) || !body.containsKey("on")) {
-      StaticJsonDocument<100> doc;
-      doc["error"] = "Invalid JSON";
-      sendJson(server, 400, doc);
-      return;
-    }
-
+    if (!validateJsonBody(server, "on", body)) return;
+    
     pumpSet(body["on"]);
 
     StaticJsonDocument<100> doc;
@@ -40,7 +25,6 @@ inline void registerPumpRoutes(ESP8266WebServer& server) {
   });
 
   server.on("/pump/toggle", HTTP_POST, [&]() {
-    sendCorsHeaders(server);
     pumpToggle();
 
     StaticJsonDocument<100> doc;
@@ -49,34 +33,16 @@ inline void registerPumpRoutes(ESP8266WebServer& server) {
   });
 
   server.on("/pump/time", HTTP_GET, [&]() {
-    sendCorsHeaders(server);
-
     StaticJsonDocument<100> doc;
     doc["seconds"] = pumpStorageLoadExecutionTime();                             
     doc["min"] = PUMP_MIN_EXECUTION_TIME_SECONDS;                 
     doc["max"] = PUMP_MAX_EXECUTION_TIME_SECONDS;                 
-
     sendJson(server, 200, doc);
   });
 
   server.on("/pump/time", HTTP_PUT, [&]() {
-    sendCorsHeaders(server);
-
-    if (!server.hasArg("plain")) {
-      StaticJsonDocument<100> doc;
-      doc["error"] = "Missing body";
-      sendJson(server, 400, doc);
-      return;
-    }
-
     StaticJsonDocument<100> body;
-    if (deserializeJson(body, server.arg("plain")) ||
-        !body.containsKey("seconds")) {
-      StaticJsonDocument<100> doc;
-      doc["error"] = "Invalid JSON";
-      sendJson(server, 400, doc);
-      return;
-    }
+    if (!validateJsonBody(server, "seconds", body)) return;
 
     uint16_t seconds = body["seconds"];
     seconds = constrain(seconds,
