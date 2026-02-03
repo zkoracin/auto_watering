@@ -7,9 +7,7 @@
 
 inline void registerStatusRoutes(ESP8266WebServer& server) {
   server.on("/status", HTTP_GET, [&]() {
-    sendCorsHeaders(server);
-
-    StaticJsonDocument<200> doc;
+    StaticJsonDocument<100> doc;
     doc["status"] = "ok";
     doc["ip"] = WiFi.localIP().toString();
 
