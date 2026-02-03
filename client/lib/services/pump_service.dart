@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:client/models/pump_status.dart';
+import 'package:client/models/pump_execution_time.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
@@ -42,6 +43,24 @@ class PumpService {
     } catch (e) {
       debugPrint('Error toggling pump: $e');
       return const PumpStatus(pumpOn: false);
+    }
+  }
+
+  Future<PumpExecutionTime> getPumpExecutionTime() async {
+    try {
+      final response = await http
+          .get(Uri.parse('$baseUrl/time'))
+          .timeout(timeout);
+
+      if (response.statusCode != 200) {
+        throw Exception('Failed to fetch pump time');
+      }
+
+      final data = jsonDecode(response.body) as Map<String, dynamic>;
+      return PumpExecutionTime.fromJson(data);
+    } catch (e) {
+      debugPrint('Error fetching pump time: $e');
+      return const PumpExecutionTime(seconds: 0, min: 0, max: 0);
     }
   }
 }
