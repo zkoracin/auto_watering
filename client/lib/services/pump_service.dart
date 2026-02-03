@@ -63,4 +63,21 @@ class PumpService {
       return const PumpExecutionTime(seconds: 0, min: 0, max: 0);
     }
   }
+
+  Future<int> setPumpExecutionTime(int seconds) async {
+    final response = await http
+        .put(
+          Uri.parse('$baseUrl/time'),
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode({'seconds': seconds}),
+        )
+        .timeout(timeout);
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to update pump time');
+    }
+
+    final data = jsonDecode(response.body) as Map<String, dynamic>;
+    return data['seconds'] as int;
+  }
 }
