@@ -68,4 +68,34 @@ inline void registerPumpRoutes(ESP8266WebServer& server) {
     sendJson(server, 200, doc);
   });
 
+  server.on("/pump/schedule", HTTP_GET, [&]() {
+    ScheduleEntry schedule = pumpStorageLoadSchedule();
+
+    StaticJsonDocument<100> doc;
+    doc["hour"] = schedule.hour;
+    doc["minute"] = schedule.minute;
+    doc["interval"] = schedule.interval;
+    sendJson(server, 200, doc);
+  });
+
+  server.on("/pump/schedule", HTTP_PUT, [&]() {
+    StaticJsonDocument<100> body;
+    if (!validateJsonBody(server, "hour", body)) return;
+    if (!validateJsonBody(server, "minute", body)) return;
+    if (!validateJsonBody(server, "interval", body)) return;
+
+    ScheduleEntry schedule;
+    schedule.hour = body["hour"];
+    schedule.minute = body["minute"];
+    schedule.interval = body["interval"];
+
+    pumpStorageSaveSchedule(schedule);
+
+    StaticJsonDocument<100> doc;
+    doc["hour"] = schedule.hour;
+    doc["minute"] = schedule.minute;
+    doc["interval"] = schedule.interval;
+    sendJson(server, 200, doc);
+  });
+
 }

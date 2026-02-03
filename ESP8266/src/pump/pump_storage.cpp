@@ -3,8 +3,6 @@
 #include "config.h"
 #include <config/config.h>
 
-#define EEPROM_SIZE 8
-#define EEPROM_ADDR_PUMP_SECONDS 0
 
 void pumpStorageInit()
 {
@@ -35,4 +33,18 @@ void pumpStorageSaveExecutionTime(uint16_t seconds)
 
     EEPROM.put(EEPROM_ADDR_PUMP_SECONDS, seconds);
     EEPROM.commit();
+}
+
+void pumpStorageSaveSchedule(const ScheduleEntry &entry)
+{
+    EEPROM.put(EEPROM_ADDR_PUMP_SCHEDULE, entry);
+    EEPROM.commit();
+}
+
+
+ScheduleEntry pumpStorageLoadSchedule()
+{
+    ScheduleEntry entry;
+    EEPROM.get(EEPROM_ADDR_PUMP_SCHEDULE, entry);
+    return entry;
 }
