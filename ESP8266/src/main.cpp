@@ -4,6 +4,7 @@
 #include "core/wifi_manager.h"
 #include "core/cors.h"
 #include "routes/server_routes.h"
+#include "pump/pump_storage.h"
 
 ESP8266WebServer server(80);
 
@@ -12,6 +13,7 @@ void setup() {
   delay(1000);
 
   pumpInit();
+  pumpStorageInit();
 
   Serial.println();
   Serial.println("Connecting to WiFi...");
@@ -25,4 +27,5 @@ void setup() {
 
 void loop() {
   server.handleClient();
+  pumpUpdate();
 }
