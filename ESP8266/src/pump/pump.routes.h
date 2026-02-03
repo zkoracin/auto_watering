@@ -2,6 +2,7 @@
 #include <ESP8266WebServer.h>
 #include <ArduinoJson.h>
 #include "pump.h"
+#include "pump_storage.h"
 #include "core/cors.h"
 #include "core/json_utils.h"
 
@@ -44,6 +45,17 @@ inline void registerPumpRoutes(ESP8266WebServer& server) {
 
     StaticJsonDocument<100> doc;
     doc["pumpOn"] = pumpState();
+    sendJson(server, 200, doc);
+  });
+
+  server.on("/pump/time", HTTP_GET, [&]() {
+    sendCorsHeaders(server);
+
+    StaticJsonDocument<100> doc;
+    doc["seconds"] = pumpStorageLoadExecutionTime();                             
+    doc["min"] = PUMP_MIN_EXECUTION_TIME_SECONDS;                 
+    doc["max"] = PUMP_MAX_EXECUTION_TIME_SECONDS;                 
+
     sendJson(server, 200, doc);
   });
 }
