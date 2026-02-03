@@ -1,70 +1,59 @@
 import 'package:client/models/esp_connection.dart';
-import 'package:client/services/esp_service.dart';
+import 'package:client/providers/esp_status_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class EspConnectionCard extends StatefulWidget {
+class EspConnectionCard extends ConsumerWidget {
   const EspConnectionCard({super.key});
 
   @override
-  State<EspConnectionCard> createState() => _EspConnectionCardState();
-}
-
-class _EspConnectionCardState extends State<EspConnectionCard> {
-  final EspService _espService = EspService();
-  EspConnectionState _state = EspConnectionState.idle;
-
-  Future<void> _testEspConnection() async {
-    setState(() => _state = EspConnectionState.testing);
-
-    try {
-      await _espService.getStatus();
-      setState(() => _state = EspConnectionState.success);
-    } catch (_) {
-      setState(() => _state = EspConnectionState.failure);
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final colorScheme = Theme.of(context).colorScheme;
+    final espStatus = ref.watch(espStatusProvider);
+
+    final icon = espStatus.isLoading
+        ? EspConnectionState.testing.icon(colorScheme)
+        : espStatus.hasError
+        ? EspConnectionState.failure.icon(colorScheme)
+        : EspConnectionState.success.icon(colorScheme);
+
+    final buttonText = espStatus.isLoading
+        ? EspConnectionState.testing.buttonText
+        : espStatus.hasError
+        ? EspConnectionState.failure.buttonText
+        : EspConnectionState.success.buttonText;
+
     return Card(
       elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       margin: const EdgeInsets.symmetric(vertical: 8),
       child: Padding(
         padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Row(
           children: [
-            Row(
-              children: [
-                _state.icon(colorScheme),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    _state.buttonText,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+            icon,
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                buttonText,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
                 ),
-                ElevatedButton(
-                  onPressed: _state == EspConnectionState.testing
-                      ? null
-                      : _testEspConnection,
-                  style: ElevatedButton.styleFrom(
-                    minimumSize: const Size(80, 36),
-                  ),
-                  child: _state == EspConnectionState.testing
-                      ? const SizedBox(
-                          width: 18,
-                          height: 18,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : const Text('Test'),
-                ),
-              ],
+              ),
+            ),
+            ElevatedButton(
+              onPressed: espStatus.isLoading
+                  ? null
+                  : () => ref.invalidate(espStatusProvider),
+              style: ElevatedButton.styleFrom(minimumSize: const Size(80, 36)),
+              child: espStatus.isLoading
+                  ? const SizedBox(
+                      width: 18,
+                      height: 18,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : const Text('Test'),
             ),
           ],
         ),
