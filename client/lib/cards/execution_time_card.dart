@@ -1,3 +1,4 @@
+import 'package:client/buttons/increment_button.dart';
 import 'package:flutter/material.dart';
 
 class ExecutionTimeCard extends StatefulWidget {
@@ -51,7 +52,7 @@ class _ExecutionTimeCardState extends State<ExecutionTimeCard> {
 
             Row(
               children: [
-                _ActionButton(icon: Icons.remove, onTap: _decrement),
+                IncrementButton(icon: Icons.remove, onTap: _decrement),
                 const SizedBox(width: 16),
                 Expanded(
                   child: Center(
@@ -65,32 +66,11 @@ class _ExecutionTimeCardState extends State<ExecutionTimeCard> {
                   ),
                 ),
                 const SizedBox(width: 16),
-                _ActionButton(icon: Icons.add, onTap: _increment),
+                IncrementButton(icon: Icons.add, onTap: _increment),
               ],
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class _ActionButton extends StatelessWidget {
-  final IconData icon;
-  final VoidCallback onTap;
-
-  const _ActionButton({required this.icon, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(30),
-      child: Container(
-        width: 44,
-        height: 44,
-        decoration: BoxDecoration(color: Colors.green, shape: BoxShape.circle),
-        child: Icon(icon, color: Colors.white),
       ),
     );
   }
