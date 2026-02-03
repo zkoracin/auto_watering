@@ -58,4 +58,35 @@ inline void registerPumpRoutes(ESP8266WebServer& server) {
 
     sendJson(server, 200, doc);
   });
+
+  server.on("/pump/time", HTTP_PUT, [&]() {
+    sendCorsHeaders(server);
+
+    if (!server.hasArg("plain")) {
+      StaticJsonDocument<100> doc;
+      doc["error"] = "Missing body";
+      sendJson(server, 400, doc);
+      return;
+    }
+
+    StaticJsonDocument<100> body;
+    if (deserializeJson(body, server.arg("plain")) ||
+        !body.containsKey("seconds")) {
+      StaticJsonDocument<100> doc;
+      doc["error"] = "Invalid JSON";
+      sendJson(server, 400, doc);
+      return;
+    }
+
+    uint16_t seconds = body["seconds"];
+    seconds = constrain(seconds,
+                        PUMP_MIN_EXECUTION_TIME_SECONDS,
+                        PUMP_MAX_EXECUTION_TIME_SECONDS);
+
+    pumpStorageSaveExecutionTime(seconds);
+
+    StaticJsonDocument<100> doc;
+    doc["seconds"] = pumpStorageLoadExecutionTime();
+    sendJson(server, 200, doc);
+  });
 }
