@@ -1,3 +1,4 @@
+import 'package:client/models/pump_schedule.dart';
 import 'package:client/models/pump_status.dart';
 import 'package:client/models/pump_run_time.dart';
 import 'package:dio/dio.dart';
@@ -30,5 +31,18 @@ class PumpService {
       data: {'seconds': seconds},
     );
     return PumpRunTime.fromJson(response.data!);
+  }
+
+  Future<PumpSchedule> getPumpSchedule() async {
+    final response = await dio.get<Map<String, dynamic>>('$baseUrl/schedule');
+    return PumpSchedule.fromJson(response.data!);
+  }
+
+  Future<PumpSchedule> updatePumpSchedule(PumpSchedule schedule) async {
+    final response = await dio.put<Map<String, dynamic>>(
+      '$baseUrl/schedule',
+      data: schedule.toJson(),
+    );
+    return PumpSchedule.fromJson(response.data!);
   }
 }
