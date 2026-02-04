@@ -1,4 +1,4 @@
-import 'package:client/buttons/increment_button.dart';
+import 'package:client/cards/numeric_setting_card.dart';
 import 'package:client/providers/pump_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -13,91 +13,30 @@ class PumpRunTimeCard extends ConsumerStatefulWidget {
 class _PumpRunTimeCardState extends ConsumerState<PumpRunTimeCard> {
   int pumpSeconds = 30;
 
-  void _increment(int min, int max) {
-    setState(() {
-      pumpSeconds = (pumpSeconds + 1).clamp(min, max);
-    });
-  }
-
-  void _decrement(int min, int max) {
-    setState(() {
-      pumpSeconds = (pumpSeconds - 1).clamp(min, max);
-    });
-  }
-
-  void _confirm() {
-    ref.read(pumpRunTimeProvider.notifier).updatePumpRunTime(pumpSeconds);
-  }
-
   @override
   Widget build(BuildContext context) {
     final pumpData = ref.watch(pumpRunTimeProvider);
-    final currentTime = pumpData.value?.seconds ?? 30;
+    final current = pumpData.value?.seconds ?? 30;
     final min = pumpData.value?.min ?? 2;
     final max = pumpData.value?.max ?? 600;
 
-    return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      elevation: 4,
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Current Run Time: $currentTime seconds',
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              'This means that when the pump is turned on, it will run for $currentTime seconds',
-              style: const TextStyle(fontSize: 14, color: Colors.grey),
-            ),
-            const SizedBox(height: 16),
+    pumpSeconds = pumpSeconds.clamp(min, max);
 
-            Row(
-              children: [
-                IncrementButton(
-                  icon: Icons.remove,
-                  onTap: () => _decrement(min, max),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Center(
-                    child: Text(
-                      pumpSeconds.toString(),
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 16),
-                IncrementButton(
-                  icon: Icons.add,
-                  onTap: () => _increment(min, max),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: pumpData.isLoading ? null : _confirm,
-                child: pumpData.isLoading
-                    ? const SizedBox(
-                        width: 24,
-                        height: 24,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : const Text('Confirm'),
-              ),
-            ),
-          ],
-        ),
-      ),
+    return NumericSettingCard(
+      title: 'Current Run Time',
+      description:
+          'This means that when the pump is turned on, it will run for $current seconds',
+      value: pumpSeconds,
+      min: min,
+      max: max,
+      isLoading: pumpData.isLoading,
+      onIncrement: () =>
+          setState(() => pumpSeconds = (pumpSeconds + 1).clamp(min, max)),
+      onDecrement: () =>
+          setState(() => pumpSeconds = (pumpSeconds - 1).clamp(min, max)),
+      onConfirm: () {
+        ref.read(pumpRunTimeProvider.notifier).updatePumpRunTime(pumpSeconds);
+      },
     );
   }
 }
