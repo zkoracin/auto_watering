@@ -1,5 +1,5 @@
 import 'package:client/models/pump_status.dart';
-import 'package:client/models/pump_execution_time.dart';
+import 'package:client/models/pump_run_time.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
@@ -19,16 +19,16 @@ class PumpService {
     return PumpStatus.fromJson(response.data!);
   }
 
-  Future<PumpExecutionTime> getPumpExecutionTime() async {
+  Future<PumpRunTime> getPumpRunTime() async {
     final response = await dio.get<Map<String, dynamic>>('$baseUrl/time');
-    return PumpExecutionTime.fromJson(response.data!);
+    return PumpRunTime.fromJson(response.data!);
   }
 
-  Future<PumpExecutionTime> setPumpExecutionTime(int seconds) async {
+  Future<PumpRunTime> updatePumpRunTime(int seconds) async {
     final response = await dio.put<Map<String, dynamic>>(
       '$baseUrl/time',
       data: {'seconds': seconds},
     );
-    return PumpExecutionTime.fromJson(response.data!);
+    return PumpRunTime.fromJson(response.data!);
   }
 }

@@ -1,5 +1,5 @@
 import 'package:client/cards/scheduler_card.dart';
-import 'package:client/providers/pump_execution_time_provider.dart';
+import 'package:client/providers/pump_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -8,7 +8,7 @@ class SchedulerPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final exeTime = ref.watch(pumpExecutionTimeProvider);
+    final pumpRunTime = ref.watch(pumpRunTimeProvider);
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -21,10 +21,10 @@ class SchedulerPage extends ConsumerWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  if (exeTime.isLoading)
+                  if (pumpRunTime.isLoading)
                     const CircularProgressIndicator()
                   else
-                    SchedulerCard(pumpRunTime: exeTime.value?.seconds ?? 0),
+                    SchedulerCard(pumpRunTime: pumpRunTime.value?.seconds ?? 0),
                 ],
               ),
             ),

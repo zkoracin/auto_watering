@@ -1,16 +1,16 @@
 import 'package:client/buttons/increment_button.dart';
-import 'package:client/providers/pump_execution_time_provider.dart';
+import 'package:client/providers/pump_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class ExecutionTimeCard extends ConsumerStatefulWidget {
-  const ExecutionTimeCard({super.key});
+class PumpRunTimeCard extends ConsumerStatefulWidget {
+  const PumpRunTimeCard({super.key});
 
   @override
-  ConsumerState<ExecutionTimeCard> createState() => _ExecutionTimeCardState();
+  ConsumerState<PumpRunTimeCard> createState() => _PumpRunTimeCardState();
 }
 
-class _ExecutionTimeCardState extends ConsumerState<ExecutionTimeCard> {
+class _PumpRunTimeCardState extends ConsumerState<PumpRunTimeCard> {
   int pumpSeconds = 30;
 
   void _increment(int min, int max) {
@@ -26,14 +26,12 @@ class _ExecutionTimeCardState extends ConsumerState<ExecutionTimeCard> {
   }
 
   void _confirm() {
-    ref
-        .read(pumpExecutionTimeProvider.notifier)
-        .updateExecutionTime(pumpSeconds);
+    ref.read(pumpRunTimeProvider.notifier).updatePumpRunTime(pumpSeconds);
   }
 
   @override
   Widget build(BuildContext context) {
-    final pumpData = ref.watch(pumpExecutionTimeProvider);
+    final pumpData = ref.watch(pumpRunTimeProvider);
     final currentTime = pumpData.value?.seconds ?? 30;
     final min = pumpData.value?.min ?? 2;
     final max = pumpData.value?.max ?? 600;
@@ -48,7 +46,7 @@ class _ExecutionTimeCardState extends ConsumerState<ExecutionTimeCard> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Current Execution Time: $currentTime seconds',
+              'Current Run Time: $currentTime seconds',
               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 4),
