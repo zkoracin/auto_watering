@@ -1,50 +1,43 @@
 import 'package:client/buttons/increment_button.dart';
-import 'package:client/services/pump_service.dart';
+import 'package:client/providers/pump_execution_time_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class ExecutionTimeCard extends StatefulWidget {
+class ExecutionTimeCard extends ConsumerStatefulWidget {
   const ExecutionTimeCard({super.key});
 
   @override
-  State<ExecutionTimeCard> createState() => _ExecutionTimeCardState();
+  ConsumerState<ExecutionTimeCard> createState() => _ExecutionTimeCardState();
 }
 
-class _ExecutionTimeCardState extends State<ExecutionTimeCard> {
-  final PumpService _pumpService = PumpService();
-
-  int minPumpSeconds = 5;
-  int maxPumpSeconds = 600;
-
+class _ExecutionTimeCardState extends ConsumerState<ExecutionTimeCard> {
   int pumpSeconds = 30;
 
-  bool _loading = false;
-
-  void _increment() {
+  void _increment(int min, int max) {
     setState(() {
-      pumpSeconds = (pumpSeconds + 1).clamp(minPumpSeconds, maxPumpSeconds);
+      pumpSeconds = (pumpSeconds + 1).clamp(min, max);
     });
   }
 
-  void _decrement() {
+  void _decrement(int min, int max) {
     setState(() {
-      pumpSeconds = (pumpSeconds - 1).clamp(minPumpSeconds, maxPumpSeconds);
+      pumpSeconds = (pumpSeconds - 1).clamp(min, max);
     });
   }
 
-  Future<void> _confirm() async {
-    setState(() => _loading = true);
-    try {
-      await Future.delayed(const Duration(seconds: 2));
-      await _pumpService.setPumpExecutionTime(pumpSeconds);
-    } catch (e) {
-      debugPrint('Failed to update pump time: $e');
-    } finally {
-      setState(() => _loading = false);
-    }
+  void _confirm() {
+    ref
+        .read(pumpExecutionTimeProvider.notifier)
+        .updateExecutionTime(pumpSeconds);
   }
 
   @override
   Widget build(BuildContext context) {
+    final pumpData = ref.watch(pumpExecutionTimeProvider);
+    final currentTime = pumpData.value?.seconds ?? 30;
+    final min = pumpData.value?.min ?? 2;
+    final max = pumpData.value?.max ?? 600;
+
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       elevation: 4,
@@ -54,20 +47,23 @@ class _ExecutionTimeCardState extends State<ExecutionTimeCard> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Execution Time',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            Text(
+              'Current Execution Time: $currentTime seconds',
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 4),
             Text(
-              'Device will run for $pumpSeconds Seconds',
-              style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
+              'This means that when the pump is turned on, it will run for $currentTime seconds',
+              style: const TextStyle(fontSize: 14, color: Colors.grey),
             ),
             const SizedBox(height: 16),
 
             Row(
               children: [
-                IncrementButton(icon: Icons.remove, onTap: _decrement),
+                IncrementButton(
+                  icon: Icons.remove,
+                  onTap: () => _decrement(min, max),
+                ),
                 const SizedBox(width: 16),
                 Expanded(
                   child: Center(
@@ -81,22 +77,22 @@ class _ExecutionTimeCardState extends State<ExecutionTimeCard> {
                   ),
                 ),
                 const SizedBox(width: 16),
-                IncrementButton(icon: Icons.add, onTap: _increment),
+                IncrementButton(
+                  icon: Icons.add,
+                  onTap: () => _increment(min, max),
+                ),
               ],
             ),
             const SizedBox(height: 16),
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: _loading ? null : _confirm,
-                child: _loading
+                onPressed: pumpData.isLoading ? null : _confirm,
+                child: pumpData.isLoading
                     ? const SizedBox(
                         width: 24,
                         height: 24,
-                        child: CircularProgressIndicator(
-                          color: Colors.white,
-                          strokeWidth: 2,
-                        ),
+                        child: CircularProgressIndicator(strokeWidth: 2),
                       )
                     : const Text('Confirm'),
               ),

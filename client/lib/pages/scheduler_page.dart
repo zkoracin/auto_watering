@@ -1,43 +1,15 @@
 import 'package:client/cards/scheduler_card.dart';
-import 'package:client/models/pump_execution_time.dart';
-import 'package:client/services/pump_service.dart';
+import 'package:client/providers/pump_execution_time_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class SchedulerPage extends StatefulWidget {
+class SchedulerPage extends ConsumerWidget {
   const SchedulerPage({super.key});
 
   @override
-  State<SchedulerPage> createState() => _SchedulerPageState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final exeTime = ref.watch(pumpExecutionTimeProvider);
 
-class _SchedulerPageState extends State<SchedulerPage> {
-  final PumpService _pumpService = PumpService();
-
-  PumpExecutionTime? _pumpTime;
-  bool _loadingPumpTime = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadPumpTime();
-  }
-
-  Future<void> _loadPumpTime() async {
-    setState(() => _loadingPumpTime = true);
-    try {
-      final response = await _pumpService.getPumpExecutionTime();
-      setState(() {
-        _pumpTime = response;
-        _loadingPumpTime = false;
-      });
-    } catch (e) {
-      debugPrint('Failed to load pump time: $e');
-      setState(() => _loadingPumpTime = false);
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
         return SingleChildScrollView(
@@ -49,10 +21,10 @@ class _SchedulerPageState extends State<SchedulerPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  if (_loadingPumpTime)
+                  if (exeTime.isLoading)
                     const CircularProgressIndicator()
                   else
-                    SchedulerCard(pumpRunTime: _pumpTime?.seconds ?? 0),
+                    SchedulerCard(pumpRunTime: exeTime.value?.seconds ?? 0),
                 ],
               ),
             ),
