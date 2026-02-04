@@ -1,5 +1,4 @@
-import 'package:client/cards/scheduler_card.dart';
-import 'package:client/providers/pump_provider.dart';
+import 'package:client/cards/pump_run_time_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -8,24 +7,16 @@ class SchedulerPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final pumpRunTime = ref.watch(pumpRunTimeProvider);
-
     return LayoutBuilder(
       builder: (context, constraints) {
         return SingleChildScrollView(
           padding: const EdgeInsets.all(16),
-          child: ConstrainedBox(
-            constraints: BoxConstraints(minHeight: constraints.maxHeight),
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 600),
+              child: const Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  if (pumpRunTime.isLoading)
-                    const CircularProgressIndicator()
-                  else
-                    SchedulerCard(pumpRunTime: pumpRunTime.value?.seconds ?? 0),
-                ],
+                children: [PumpRunTimeCard()],
               ),
             ),
           ),
