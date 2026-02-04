@@ -1,65 +1,24 @@
 import 'package:client/buttons/power_button.dart';
-import 'package:client/services/pump_service.dart';
+import 'package:client/providers/pump_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class StatusPage extends StatefulWidget {
+class StatusPage extends ConsumerWidget {
   const StatusPage({super.key});
 
   @override
-  State<StatusPage> createState() => _StatusPageState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final pump = ref.watch(pumpStatusProvider);
 
-class _StatusPageState extends State<StatusPage> {
-  final PumpService _pumpService = PumpService();
-  bool _pumpOn = false;
-  bool _loading = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadPumpStatus();
-  }
-
-  Future<void> _loadPumpStatus() async {
-    setState(() => _loading = true);
-    try {
-      final status = await _pumpService.fetchPumpStatus();
-      setState(() {
-        _pumpOn = status.pumpOn;
-        _loading = false;
-      });
-    } catch (e) {
-      debugPrint('Failed to load pump status: $e');
-      setState(() => _loading = false);
-    }
-  }
-
-  Future<void> _togglePump() async {
-    setState(() => _loading = true);
-
-    try {
-      final statusDto = await _pumpService.togglePump();
-      setState(() {
-        _pumpOn = statusDto.pumpOn;
-        _loading = false;
-      });
-    } catch (e) {
-      debugPrint('Failed to toggle pump: $e');
-      setState(() => _loading = false);
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
     return Center(
-      child: _loading
-          ? const CircularProgressIndicator()
-          : PowerButton(
-              isOn: _pumpOn,
-              onPressed: () async {
-                _togglePump();
-              },
-            ),
+      child: pump.when(
+        loading: () => const CircularProgressIndicator(),
+        error: (error, stack) => const Text('Failed to load pump status'),
+        data: (status) => PowerButton(
+          isOn: status.pumpOn,
+          onPressed: () => ref.read(pumpStatusProvider.notifier).togglePump(),
+        ),
+      ),
     );
   }
 }

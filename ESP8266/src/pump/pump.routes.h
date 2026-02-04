@@ -53,6 +53,8 @@ inline void registerPumpRoutes(ESP8266WebServer& server) {
 
     StaticJsonDocument<100> doc;
     doc["seconds"] = pumpStorageLoadExecutionTime();
+    doc["min"] = PUMP_MIN_EXECUTION_TIME_SECONDS;                 
+    doc["max"] = PUMP_MAX_EXECUTION_TIME_SECONDS;          
     sendJson(server, 200, doc);
   });
 
