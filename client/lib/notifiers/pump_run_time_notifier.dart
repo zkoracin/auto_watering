@@ -13,8 +13,15 @@ class PumpRunTimeNotifier extends AsyncNotifier<PumpRunTime> {
     return _pumpService.getPumpRunTime();
   }
 
+  Future<void> refresh() async {
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(() => _pumpService.getPumpRunTime());
+  }
+
   Future<void> updatePumpRunTime(int seconds) async {
-    final response = await _pumpService.updatePumpRunTime(seconds);
-    state = AsyncData(response);
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(
+      () => _pumpService.updatePumpRunTime(seconds),
+    );
   }
 }

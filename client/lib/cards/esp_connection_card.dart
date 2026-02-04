@@ -1,5 +1,5 @@
 import 'package:client/models/esp_connection.dart';
-import 'package:client/providers/esp_status_provider.dart';
+import 'package:client/providers/esp_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -45,7 +45,7 @@ class EspConnectionCard extends ConsumerWidget {
             ElevatedButton(
               onPressed: espStatus.isLoading
                   ? null
-                  : () => ref.invalidate(espStatusProvider),
+                  : () => ref.read(espStatusProvider.notifier).refresh(),
               style: ElevatedButton.styleFrom(minimumSize: const Size(80, 36)),
               child: espStatus.isLoading
                   ? const SizedBox(

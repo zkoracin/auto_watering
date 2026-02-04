@@ -11,13 +11,14 @@ class StatusPage extends ConsumerWidget {
     final pump = ref.watch(pumpStatusProvider);
 
     return Center(
-      child: pump.isLoading
-          ? const CircularProgressIndicator()
-          : PowerButton(
-              isOn: pump.value?.pumpOn ?? false,
-              onPressed: () =>
-                  ref.read(pumpStatusProvider.notifier).togglePump(),
-            ),
+      child: pump.when(
+        loading: () => const CircularProgressIndicator(),
+        error: (error, stack) => const Text('Failed to load pump status'),
+        data: (status) => PowerButton(
+          isOn: status.pumpOn,
+          onPressed: () => ref.read(pumpStatusProvider.notifier).togglePump(),
+        ),
+      ),
     );
   }
 }

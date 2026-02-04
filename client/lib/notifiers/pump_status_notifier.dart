@@ -13,13 +13,13 @@ class PumpStatusNotifier extends AsyncNotifier<PumpStatus> {
     return _pumpService.getPumpStatus();
   }
 
-  Future<void> togglePump() async {
-    final status = await _pumpService.togglePump();
-    state = AsyncData(status);
+  Future<void> refresh() async {
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(() => _pumpService.getPumpStatus());
   }
 
-  Future<void> refresh() async {
-    final status = await _pumpService.getPumpStatus();
-    state = AsyncData(status);
+  Future<void> togglePump() async {
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(() => _pumpService.togglePump());
   }
 }
