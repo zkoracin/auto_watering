@@ -1,3 +1,4 @@
+import 'package:client/buttons/test_button.dart';
 import 'package:client/models/esp_connection.dart';
 import 'package:client/providers/esp_provider.dart';
 import 'package:flutter/material.dart';
@@ -42,18 +43,9 @@ class EspConnectionCard extends ConsumerWidget {
                 ),
               ),
             ),
-            ElevatedButton(
-              onPressed: espStatus.isLoading
-                  ? null
-                  : () => ref.read(espStatusProvider.notifier).refresh(),
-              style: ElevatedButton.styleFrom(minimumSize: const Size(80, 36)),
-              child: espStatus.isLoading
-                  ? const SizedBox(
-                      width: 18,
-                      height: 18,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    )
-                  : const Text('Test'),
+            TestButton(
+              isLoading: espStatus.isLoading,
+              onPressed: () => ref.read(espStatusProvider.notifier).refresh(),
             ),
           ],
         ),
