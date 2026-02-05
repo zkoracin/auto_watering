@@ -1,16 +1,16 @@
-import 'package:client/buttons/test_button.dart';
-import 'package:client/models/esp_connection.dart';
-import 'package:client/providers/esp_provider.dart';
+import 'package:client/features/pump/ui/buttons/test_button.dart';
+import 'package:client/features/esp/data/esp_providers.dart';
+import 'package:client/features/esp/domain/esp_connection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class EspConnectionCard extends ConsumerWidget {
-  const EspConnectionCard({super.key});
+class ConnectionCard extends ConsumerWidget {
+  const ConnectionCard({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final colorScheme = Theme.of(context).colorScheme;
-    final espStatus = ref.watch(espStatusProvider);
+    final espStatus = ref.watch(espStatusNotifierProvider);
 
     final icon = espStatus.isLoading
         ? EspConnectionState.testing.icon(colorScheme)
@@ -45,7 +45,8 @@ class EspConnectionCard extends ConsumerWidget {
             ),
             TestButton(
               isLoading: espStatus.isLoading,
-              onPressed: () => ref.read(espStatusProvider.notifier).refresh(),
+              onPressed: () =>
+                  ref.read(espStatusNotifierProvider.notifier).refresh(),
             ),
           ],
         ),

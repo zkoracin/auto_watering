@@ -1,6 +1,6 @@
-import 'package:client/buttons/confirm_button.dart';
+import 'package:client/shared/buttons/confirm_button.dart';
 import 'package:flutter/material.dart';
-import 'package:client/buttons/increment_button.dart';
+import 'package:client/shared/buttons/increment_button.dart';
 
 class NumericSettingCard extends StatelessWidget {
   final String title;

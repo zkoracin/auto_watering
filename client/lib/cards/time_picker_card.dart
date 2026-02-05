@@ -1,7 +1,7 @@
 import 'package:client/providers/pump_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:client/buttons/increment_button.dart';
-import 'package:client/buttons/confirm_button.dart';
+import 'package:client/shared/buttons/increment_button.dart';
+import 'package:client/shared/buttons/confirm_button.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class TimePickerCard extends ConsumerStatefulWidget {

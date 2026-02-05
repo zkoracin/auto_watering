@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:client/buttons/test_button.dart';
+import 'package:client/features/pump/ui/buttons/test_button.dart';
 import 'package:client/providers/pump_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
