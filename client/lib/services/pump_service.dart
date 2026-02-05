@@ -1,3 +1,4 @@
+import 'package:client/models/pump_run_time_test.dart';
 import 'package:client/models/pump_schedule.dart';
 import 'package:client/models/pump_status.dart';
 import 'package:client/models/pump_run_time.dart';
@@ -31,6 +32,11 @@ class PumpService {
       data: {'seconds': seconds},
     );
     return PumpRunTime.fromJson(response.data!);
+  }
+
+  Future<PumpRuntimeTestResponse> testPumpRunTime() async {
+    final response = await dio.post('$baseUrl/runtime-test');
+    return PumpRuntimeTestResponse.fromJson(response.data!);
   }
 
   Future<PumpSchedule> getPumpSchedule() async {

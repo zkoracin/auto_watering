@@ -1,7 +1,9 @@
 import 'package:client/models/pump_run_time.dart';
+import 'package:client/models/pump_run_time_test.dart';
 import 'package:client/models/pump_schedule.dart';
 import 'package:client/models/pump_status.dart';
 import 'package:client/notifiers/pump_run_time_notifier.dart';
+import 'package:client/notifiers/pump_runtime_test_notifier.dart';
 import 'package:client/notifiers/pump_schedule_interval_notifier.dart';
 import 'package:client/notifiers/pump_schedule_time_notifier.dart';
 import 'package:client/notifiers/pump_status_notifier.dart';
@@ -25,4 +27,9 @@ final pumpScheduleIntervalProvider =
 final pumpScheduleTimeProvider =
     AsyncNotifierProvider<PumpScheduleTimeNotifier, PumpSchedule>(
       PumpScheduleTimeNotifier.new,
+    );
+
+final pumpRuntimeTestProvider =
+    AsyncNotifierProvider<PumpRuntimeTestNotifier, PumpRuntimeTestResponse>(
+      PumpRuntimeTestNotifier.new,
     );
