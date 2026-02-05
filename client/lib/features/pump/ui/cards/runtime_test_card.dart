@@ -1,5 +1,5 @@
 import 'dart:async';
-
+import 'package:client/features/pump/data/pump_providers.dart';
 import 'package:client/features/pump/ui/buttons/test_button.dart';
 import 'package:client/providers/pump_provider.dart';
 import 'package:flutter/material.dart';
@@ -38,7 +38,7 @@ class _RuntimeTestCardState extends ConsumerState<RuntimeTestCard> {
 
   @override
   Widget build(BuildContext context) {
-    final runtime = ref.watch(pumpRunTimeProvider);
+    final runtime = ref.watch(runtimeProvider);
     final pumpTest = ref.watch(pumpRuntimeTestProvider);
 
     int seconds = runtime.value?.seconds ?? 2;
