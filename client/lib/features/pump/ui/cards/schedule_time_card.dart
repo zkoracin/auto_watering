@@ -4,14 +4,14 @@ import 'package:client/shared/buttons/increment_button.dart';
 import 'package:client/shared/buttons/confirm_button.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class TimePickerCard extends ConsumerStatefulWidget {
-  const TimePickerCard({super.key});
+class ScheduleTimeCard extends ConsumerStatefulWidget {
+  const ScheduleTimeCard({super.key});
 
   @override
-  ConsumerState<TimePickerCard> createState() => _TimePickerCardState();
+  ConsumerState<ScheduleTimeCard> createState() => _ScheduleTimeCardState();
 }
 
-class _TimePickerCardState extends ConsumerState<TimePickerCard> {
+class _ScheduleTimeCardState extends ConsumerState<ScheduleTimeCard> {
   late int hour;
   late int minute;
 

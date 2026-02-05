@@ -3,16 +3,15 @@ import 'package:client/providers/pump_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class PumpScheduleIntervalCard extends ConsumerStatefulWidget {
-  const PumpScheduleIntervalCard({super.key});
+class ScheduleIntervalCard extends ConsumerStatefulWidget {
+  const ScheduleIntervalCard({super.key});
 
   @override
-  ConsumerState<PumpScheduleIntervalCard> createState() =>
-      _PumpPumpScheduleIntervalCardState();
+  ConsumerState<ScheduleIntervalCard> createState() =>
+      _ScheduleIntervalCardState();
 }
 
-class _PumpPumpScheduleIntervalCardState
-    extends ConsumerState<PumpScheduleIntervalCard> {
+class _ScheduleIntervalCardState extends ConsumerState<ScheduleIntervalCard> {
   int interval = 2;
   int min = 1;
   int max = 14;

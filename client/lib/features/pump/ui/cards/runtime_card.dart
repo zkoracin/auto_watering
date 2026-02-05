@@ -3,14 +3,14 @@ import 'package:client/providers/pump_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class PumpRunTimeCard extends ConsumerStatefulWidget {
-  const PumpRunTimeCard({super.key});
+class RuntimeCard extends ConsumerStatefulWidget {
+  const RuntimeCard({super.key});
 
   @override
-  ConsumerState<PumpRunTimeCard> createState() => _PumpRunTimeCardState();
+  ConsumerState<RuntimeCard> createState() => _RuntimeCardState();
 }
 
-class _PumpRunTimeCardState extends ConsumerState<PumpRunTimeCard> {
+class _RuntimeCardState extends ConsumerState<RuntimeCard> {
   int pumpSeconds = 30;
 
   @override

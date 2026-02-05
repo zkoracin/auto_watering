@@ -5,15 +5,14 @@ import 'package:client/providers/pump_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class PumpRuntimeTestCard extends ConsumerStatefulWidget {
-  const PumpRuntimeTestCard({super.key});
+class RuntimeTestCard extends ConsumerStatefulWidget {
+  const RuntimeTestCard({super.key});
 
   @override
-  ConsumerState<PumpRuntimeTestCard> createState() =>
-      _PumpRuntimeTestCardState();
+  ConsumerState<RuntimeTestCard> createState() => _RuntimeTestCardState();
 }
 
-class _PumpRuntimeTestCardState extends ConsumerState<PumpRuntimeTestCard> {
+class _RuntimeTestCardState extends ConsumerState<RuntimeTestCard> {
   Timer? _timer;
   int _remainingSeconds = 0;
 

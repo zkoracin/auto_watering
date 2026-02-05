@@ -1,5 +1,5 @@
 import 'package:client/features/esp/ui/connection_card.dart';
-import 'package:client/cards/pump_runtime_test_card.dart';
+import 'package:client/features/pump/ui/cards/runtime_test_card.dart';
 import 'package:flutter/material.dart';
 
 class SettingsPage extends StatelessWidget {
@@ -16,7 +16,7 @@ class SettingsPage extends StatelessWidget {
               constraints: const BoxConstraints(maxWidth: 600),
               child: const Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
-                children: [ConnectionCard(), PumpRuntimeTestCard()],
+                children: [ConnectionCard(), RuntimeTestCard()],
               ),
             ),
           ),
