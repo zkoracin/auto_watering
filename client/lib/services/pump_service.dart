@@ -21,13 +21,13 @@ class PumpService {
   }
 
   Future<PumpRunTime> getPumpRunTime() async {
-    final response = await dio.get<Map<String, dynamic>>('$baseUrl/time');
+    final response = await dio.get<Map<String, dynamic>>('$baseUrl/runtime');
     return PumpRunTime.fromJson(response.data!);
   }
 
   Future<PumpRunTime> updatePumpRunTime(int seconds) async {
     final response = await dio.put<Map<String, dynamic>>(
-      '$baseUrl/time',
+      '$baseUrl/runtime',
       data: {'seconds': seconds},
     );
     return PumpRunTime.fromJson(response.data!);

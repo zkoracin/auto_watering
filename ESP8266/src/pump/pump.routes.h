@@ -32,7 +32,7 @@ inline void registerPumpRoutes(ESP8266WebServer& server) {
     sendJson(server, 200, doc);
   });
 
-  server.on("/pump/time", HTTP_GET, [&]() {
+  server.on("/pump/runtime", HTTP_GET, [&]() {
     StaticJsonDocument<100> doc;
     doc["seconds"] = pumpStorageLoadExecutionTime();                             
     doc["min"] = PUMP_MIN_EXECUTION_TIME_SECONDS;                 
@@ -40,7 +40,7 @@ inline void registerPumpRoutes(ESP8266WebServer& server) {
     sendJson(server, 200, doc);
   });
 
-  server.on("/pump/time", HTTP_PUT, [&]() {
+  server.on("/pump/runtime", HTTP_PUT, [&]() {
     StaticJsonDocument<100> body;
     if (!validateJsonBody(server, "seconds", body)) return;
 
@@ -58,7 +58,7 @@ inline void registerPumpRoutes(ESP8266WebServer& server) {
     sendJson(server, 200, doc);
   });
 
-  server.on("/pump/run", HTTP_POST, [&]() {
+  server.on("/pump/runtime-test", HTTP_POST, [&]() {
     StaticJsonDocument<100> doc;
 
     uint16_t seconds = pumpStorageLoadExecutionTime();
