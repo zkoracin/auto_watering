@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:client/features/pump/data/pump_providers.dart';
 import 'package:client/features/pump/ui/buttons/test_button.dart';
-import 'package:client/providers/pump_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -39,7 +38,7 @@ class _RuntimeTestCardState extends ConsumerState<RuntimeTestCard> {
   @override
   Widget build(BuildContext context) {
     final runtime = ref.watch(runtimeProvider);
-    final pumpTest = ref.watch(pumpRuntimeTestProvider);
+    final pumpTest = ref.watch(runtimeTestProvider);
 
     int seconds = runtime.value?.seconds ?? 2;
 
@@ -74,8 +73,8 @@ class _RuntimeTestCardState extends ConsumerState<RuntimeTestCard> {
             TestButton(
               isLoading: isLoading,
               onPressed: () async {
-                await ref.read(pumpRuntimeTestProvider.notifier).runTest();
-                final updatedPumpTest = ref.read(pumpRuntimeTestProvider);
+                await ref.read(runtimeTestProvider.notifier).runTest();
+                final updatedPumpTest = ref.read(runtimeTestProvider);
                 if (!updatedPumpTest.hasError) {
                   _startCountdown(seconds);
                 }
