@@ -1,5 +1,5 @@
+import 'package:client/features/pump/data/pump_providers.dart';
 import 'package:client/features/pump/ui/buttons/power_button.dart';
-import 'package:client/providers/pump_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
