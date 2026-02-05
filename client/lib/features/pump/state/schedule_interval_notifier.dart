@@ -1,16 +1,16 @@
 import 'dart:async';
+import 'package:client/features/pump/data/pump_providers.dart';
+import 'package:client/features/pump/data/pump_repository.dart';
 import 'package:client/features/pump/domain/schedule.dart';
-import 'package:client/providers/pump_service_provider.dart';
-import 'package:client/services/pump_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class PumpScheduleIntervalNotifier extends AsyncNotifier<Schedule> {
-  late final PumpService _pumpService;
+class ScheduleIntervalNotifier extends AsyncNotifier<Schedule> {
+  late final PumpRepository _pumpRepository;
 
   @override
   FutureOr<Schedule> build() async {
-    _pumpService = ref.read(pumpServiceProvider);
-    return _pumpService.getPumpSchedule();
+    _pumpRepository = ref.read(pumpRepositoryProvider);
+    return _pumpRepository.getSchedule();
   }
 
   Future<void> updateScheduleInterval(int interval) async {
@@ -19,7 +19,7 @@ class PumpScheduleIntervalNotifier extends AsyncNotifier<Schedule> {
     state = const AsyncLoading();
     final updated = current.copyWith(interval: interval);
     state = await AsyncValue.guard(
-      () => _pumpService.updatePumpSchedule(updated),
+      () => _pumpRepository.updateSchedule(updated),
     );
   }
 }

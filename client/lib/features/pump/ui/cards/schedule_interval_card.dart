@@ -1,5 +1,5 @@
+import 'package:client/features/pump/data/pump_providers.dart';
 import 'package:client/shared/cards/numeric_setting_card.dart';
-import 'package:client/providers/pump_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -18,7 +18,7 @@ class _ScheduleIntervalCardState extends ConsumerState<ScheduleIntervalCard> {
 
   @override
   Widget build(BuildContext context) {
-    final data = ref.watch(pumpScheduleIntervalProvider);
+    final data = ref.watch(scheduleIntervalProvider);
     final current = data.value?.interval ?? interval;
 
     interval = interval.clamp(min, max);
@@ -36,7 +36,7 @@ class _ScheduleIntervalCardState extends ConsumerState<ScheduleIntervalCard> {
           setState(() => interval = (interval - 1).clamp(min, max)),
       onConfirm: () {
         ref
-            .read(pumpScheduleIntervalProvider.notifier)
+            .read(scheduleIntervalProvider.notifier)
             .updateScheduleInterval(interval);
       },
     );
