@@ -1,3 +1,4 @@
+import 'package:client/shared/constants/day_names.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:client/features/pump/data/pump_providers.dart';
@@ -9,11 +10,13 @@ class ScheduleOverviewCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final scheduleTime = ref.watch(scheduleTimeProvider);
     final scheduleInterval = ref.watch(scheduleIntervalProvider);
+    final scheduleStartDay = ref.watch(scheduleStartDayProvider);
     final runtimeState = ref.watch(runtimeProvider);
 
     final hour = scheduleTime.value?.hour ?? 0;
     final minute = scheduleTime.value?.minute ?? 0;
     final interval = scheduleInterval.value?.interval ?? 0;
+    final startDay = scheduleStartDay.value?.startDay ?? 0;
     final runtime = runtimeState.value?.seconds ?? 0;
 
     return Card(
@@ -36,6 +39,10 @@ class ScheduleOverviewCard extends ConsumerWidget {
             ),
             Text(
               'Interval: $interval days',
+              style: const TextStyle(fontSize: 16),
+            ),
+            Text(
+              'Start Day: ${dayNames[startDay]}',
               style: const TextStyle(fontSize: 16),
             ),
             const SizedBox(height: 12),

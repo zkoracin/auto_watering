@@ -35,7 +35,7 @@ class _RuntimeCardState extends ConsumerState<RuntimeCard> {
       onDecrement: () =>
           setState(() => pumpSeconds = (pumpSeconds - 1).clamp(min, max)),
       onConfirm: () {
-        ref.read(runtimeProvider.notifier).updatePumpRunTime(pumpSeconds);
+        ref.read(runtimeProvider.notifier).updateRuntime(pumpSeconds);
       },
     );
   }

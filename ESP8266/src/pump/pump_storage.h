@@ -4,7 +4,8 @@
 struct ScheduleEntry {
   uint8_t hour;      
   uint8_t minute;    
-  uint8_t interval; 
+  uint8_t interval;
+  uint8_t startDay;
 };
 
 void pumpStorageInit();
