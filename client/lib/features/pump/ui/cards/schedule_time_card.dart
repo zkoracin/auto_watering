@@ -1,4 +1,4 @@
-import 'package:client/providers/pump_provider.dart';
+import 'package:client/features/pump/data/pump_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:client/shared/buttons/increment_button.dart';
 import 'package:client/shared/buttons/confirm_button.dart';
@@ -18,7 +18,7 @@ class _ScheduleTimeCardState extends ConsumerState<ScheduleTimeCard> {
   @override
   void initState() {
     super.initState();
-    final schedule = ref.read(pumpScheduleTimeProvider).value;
+    final schedule = ref.read(scheduleTimeProvider).value;
     hour = schedule?.hour ?? 0;
     minute = schedule?.minute ?? 0;
   }
@@ -43,14 +43,12 @@ class _ScheduleTimeCardState extends ConsumerState<ScheduleTimeCard> {
   }
 
   void _confirm() {
-    ref
-        .read(pumpScheduleTimeProvider.notifier)
-        .updateScheduleTime(hour, minute);
+    ref.read(scheduleTimeProvider.notifier).updateScheduleTime(hour, minute);
   }
 
   @override
   Widget build(BuildContext context) {
-    final intervalData = ref.watch(pumpScheduleTimeProvider);
+    final intervalData = ref.watch(scheduleTimeProvider);
 
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
