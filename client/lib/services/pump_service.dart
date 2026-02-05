@@ -1,7 +1,7 @@
-import 'package:client/models/pump_run_time_test.dart';
-import 'package:client/models/pump_schedule.dart';
-import 'package:client/models/pump_status.dart';
-import 'package:client/models/pump_run_time.dart';
+import 'package:client/features/pump/domain/runtime_test.dart';
+import 'package:client/features/pump/domain/schedule.dart';
+import 'package:client/features/pump/domain/pump_status.dart';
+import 'package:client/features/pump/domain/runtime.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
@@ -21,34 +21,34 @@ class PumpService {
     return PumpStatus.fromJson(response.data!);
   }
 
-  Future<PumpRunTime> getPumpRunTime() async {
+  Future<Runtime> getPumpRunTime() async {
     final response = await dio.get<Map<String, dynamic>>('$baseUrl/runtime');
-    return PumpRunTime.fromJson(response.data!);
+    return Runtime.fromJson(response.data!);
   }
 
-  Future<PumpRunTime> updatePumpRunTime(int seconds) async {
+  Future<Runtime> updatePumpRunTime(int seconds) async {
     final response = await dio.put<Map<String, dynamic>>(
       '$baseUrl/runtime',
       data: {'seconds': seconds},
     );
-    return PumpRunTime.fromJson(response.data!);
+    return Runtime.fromJson(response.data!);
   }
 
-  Future<PumpRuntimeTestResponse> testPumpRunTime() async {
+  Future<RuntimeTest> testPumpRunTime() async {
     final response = await dio.post('$baseUrl/runtime-test');
-    return PumpRuntimeTestResponse.fromJson(response.data!);
+    return RuntimeTest.fromJson(response.data!);
   }
 
-  Future<PumpSchedule> getPumpSchedule() async {
+  Future<Schedule> getPumpSchedule() async {
     final response = await dio.get<Map<String, dynamic>>('$baseUrl/schedule');
-    return PumpSchedule.fromJson(response.data!);
+    return Schedule.fromJson(response.data!);
   }
 
-  Future<PumpSchedule> updatePumpSchedule(PumpSchedule schedule) async {
+  Future<Schedule> updatePumpSchedule(Schedule schedule) async {
     final response = await dio.put<Map<String, dynamic>>(
       '$baseUrl/schedule',
       data: schedule.toJson(),
     );
-    return PumpSchedule.fromJson(response.data!);
+    return Schedule.fromJson(response.data!);
   }
 }
