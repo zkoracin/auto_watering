@@ -48,3 +48,23 @@ ScheduleEntry pumpStorageLoadSchedule()
     EEPROM.get(EEPROM_ADDR_PUMP_SCHEDULE, entry);
     return entry;
 }
+
+void deviceTimeSave(const DeviceTime &time) {
+    EEPROM.put(EEPROM_ADDR_DEVICE_TIME, time);
+    EEPROM.commit();
+}
+
+DeviceTime deviceTimeLoad() 
+{
+    DeviceTime time;
+    EEPROM.get(EEPROM_ADDR_DEVICE_TIME, time);
+
+    // If uninitialized, reset to day 0, 00:00
+    if (time.day == 0xFFFF) {
+        time.day = 0;
+        time.hour = 0;
+        time.minute = 0;
+    }
+
+    return time;
+}
