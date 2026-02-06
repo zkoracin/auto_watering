@@ -11,18 +11,11 @@ class ConnectionCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final colorScheme = Theme.of(context).colorScheme;
     final espStatus = ref.watch(espStatusNotifierProvider);
-
-    final icon = espStatus.isLoading
-        ? EspConnectionState.testing.icon(colorScheme)
-        : espStatus.hasError
-        ? EspConnectionState.failure.icon(colorScheme)
-        : EspConnectionState.success.icon(colorScheme);
-
-    final buttonText = espStatus.isLoading
-        ? EspConnectionState.testing.buttonText
-        : espStatus.hasError
-        ? EspConnectionState.failure.buttonText
-        : EspConnectionState.success.buttonText;
+    final state = espStatus.maybeMap(
+      loading: (_) => EspConnectionState.testing,
+      error: (_) => EspConnectionState.failure,
+      orElse: () => EspConnectionState.success,
+    );
 
     return Card(
       elevation: 4,
@@ -32,11 +25,11 @@ class ConnectionCard extends ConsumerWidget {
         padding: const EdgeInsets.all(16),
         child: Row(
           children: [
-            icon,
+            state.icon(colorScheme),
             const SizedBox(width: 12),
             Expanded(
               child: Text(
-                buttonText,
+                state.buttonText,
                 style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
