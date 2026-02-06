@@ -18,7 +18,7 @@ class RuntimeNotifier extends AsyncNotifier<Runtime> {
     state = await AsyncValue.guard(() => _pumpRepository.getRuntime());
   }
 
-  Future<void> updatePumpRunTime(int seconds) async {
+  Future<void> updateRuntime(int seconds) async {
     state = const AsyncLoading();
     state = await AsyncValue.guard(
       () => _pumpRepository.updateRuntime(seconds),

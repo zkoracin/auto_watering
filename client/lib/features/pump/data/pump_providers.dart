@@ -8,6 +8,7 @@ import 'package:client/features/pump/state/pump_status_notifier.dart';
 import 'package:client/features/pump/state/runtime_notifier.dart';
 import 'package:client/features/pump/state/runtime_test_notifier.dart';
 import 'package:client/features/pump/state/schedule_interval_notifier.dart';
+import 'package:client/features/pump/state/schedule_start_day_notifier.dart';
 import 'package:client/features/pump/state/schedule_time_notifier.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -37,4 +38,9 @@ final scheduleIntervalProvider =
 final scheduleTimeProvider =
     AsyncNotifierProvider<ScheduleTimeNotifier, Schedule>(
       ScheduleTimeNotifier.new,
+    );
+
+final scheduleStartDayProvider =
+    AsyncNotifierProvider<ScheduleStartDayNotifier, Schedule>(
+      ScheduleStartDayNotifier.new,
     );

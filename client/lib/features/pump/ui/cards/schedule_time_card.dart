@@ -12,16 +12,8 @@ class ScheduleTimeCard extends ConsumerStatefulWidget {
 }
 
 class _ScheduleTimeCardState extends ConsumerState<ScheduleTimeCard> {
-  late int hour;
-  late int minute;
-
-  @override
-  void initState() {
-    super.initState();
-    final schedule = ref.read(scheduleTimeProvider).value;
-    hour = schedule?.hour ?? 0;
-    minute = schedule?.minute ?? 0;
-  }
+  int hour = 0;
+  int minute = 0;
 
   Future<void> _pickTime() async {
     final pickedTime = await showTimePicker(
@@ -42,13 +34,11 @@ class _ScheduleTimeCardState extends ConsumerState<ScheduleTimeCard> {
     }
   }
 
-  void _confirm() {
-    ref.read(scheduleTimeProvider.notifier).updateScheduleTime(hour, minute);
-  }
-
   @override
   Widget build(BuildContext context) {
-    final intervalData = ref.watch(scheduleTimeProvider);
+    final data = ref.watch(scheduleTimeProvider);
+    final currentHour = data.value?.hour ?? 0;
+    final currentMin = data.value?.minute ?? 0;
 
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -66,8 +56,8 @@ class _ScheduleTimeCardState extends ConsumerState<ScheduleTimeCard> {
             const SizedBox(height: 4),
             Text(
               'Select the time when the pump should start '
-              '${hour.toString().padLeft(2, '0')}:'
-              '${minute.toString().padLeft(2, '0')}',
+              '${currentHour.toString().padLeft(2, '0')}:'
+              '${currentMin.toString().padLeft(2, '0')}',
               style: const TextStyle(fontSize: 14, color: Colors.grey),
             ),
             const SizedBox(height: 16),
@@ -90,8 +80,10 @@ class _ScheduleTimeCardState extends ConsumerState<ScheduleTimeCard> {
             ),
             const SizedBox(height: 16),
             ConfirmButton(
-              isLoading: intervalData.isLoading,
-              onPressed: _confirm,
+              isLoading: data.isLoading,
+              onPressed: () => ref
+                  .read(scheduleTimeProvider.notifier)
+                  .updateScheduleTime(hour, minute),
             ),
           ],
         ),
