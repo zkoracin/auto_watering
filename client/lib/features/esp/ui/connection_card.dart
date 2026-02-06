@@ -1,6 +1,6 @@
 import 'package:client/features/esp/data/esp_providers.dart';
-import 'package:client/features/esp/domain/esp_connection.dart';
 import 'package:client/shared/cards/status_card.dart';
+import 'package:client/shared/constants/status_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -12,14 +12,14 @@ class ConnectionCard extends ConsumerWidget {
     final colorScheme = Theme.of(context).colorScheme;
     final espStatus = ref.watch(espStatusNotifierProvider);
     final state = espStatus.maybeMap(
-      loading: (_) => EspConnectionState.testing,
-      error: (_) => EspConnectionState.failure,
-      orElse: () => EspConnectionState.success,
+      loading: (_) => StatusState.testing,
+      error: (_) => StatusState.failure,
+      orElse: () => StatusState.success,
     );
 
     return StatusCard(
-      icon: state.icon(colorScheme, EspUiContext.status),
-      text: state.text(EspUiContext.status),
+      icon: state.icon(colorScheme, StatusContext.espConnection),
+      text: state.text(StatusContext.espConnection),
       isLoading: espStatus.isLoading || espStatus.isRefreshing,
       onRefresh: () => ref.read(espStatusNotifierProvider.notifier).refresh(),
     );
