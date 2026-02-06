@@ -12,14 +12,17 @@ class ScheduleTimeCard extends ConsumerStatefulWidget {
 }
 
 class _ScheduleTimeCardState extends ConsumerState<ScheduleTimeCard> {
-  int hour = 0;
-  int minute = 0;
+  int? _tempHour;
+  int? _tempMinute;
 
-  Future<void> _pickTime() async {
+  Future<void> _pickTime(int initialHour, int initialMinute) async {
     final pickedTime = await showTimePicker(
       context: context,
-      initialTime: TimeOfDay(hour: hour, minute: minute),
-      initialEntryMode: TimePickerEntryMode.input,
+      initialTime: TimeOfDay(
+        hour: _tempHour ?? initialHour,
+        minute: _tempMinute ?? initialMinute,
+      ),
+      initialEntryMode: TimePickerEntryMode.dial,
       builder: (context, child) => MediaQuery(
         data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
         child: child!,
@@ -28,17 +31,25 @@ class _ScheduleTimeCardState extends ConsumerState<ScheduleTimeCard> {
 
     if (pickedTime != null) {
       setState(() {
-        hour = pickedTime.hour;
-        minute = pickedTime.minute;
+        _tempHour = pickedTime.hour;
+        _tempMinute = pickedTime.minute;
       });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final data = ref.watch(scheduleTimeProvider);
-    final currentHour = data.value?.hour ?? 0;
-    final currentMin = data.value?.minute ?? 0;
+    final scheduleAsync = ref.watch(scheduleTimeProvider);
+    final currentHour = scheduleAsync.value?.hour ?? 0;
+    final currentMin = scheduleAsync.value?.minute ?? 0;
+    final displayHour = _tempHour ?? currentHour;
+    final displayMin = _tempMinute ?? currentMin;
+
+    final currentTimeText =
+        '${currentHour.toString().padLeft(2, '0')}:${currentMin.toString().padLeft(2, '0')}';
+
+    final displayTimeText =
+        '${displayHour.toString().padLeft(2, '0')}:${displayMin.toString().padLeft(2, '0')}';
 
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -55,10 +66,8 @@ class _ScheduleTimeCardState extends ConsumerState<ScheduleTimeCard> {
             ),
             const SizedBox(height: 4),
             Text(
-              'Select the time when the pump should start '
-              '${currentHour.toString().padLeft(2, '0')}:'
-              '${currentMin.toString().padLeft(2, '0')}',
-              style: const TextStyle(fontSize: 14, color: Colors.grey),
+              'Current: $currentTimeText',
+              style: TextStyle(fontSize: 14, color: Colors.grey[600]),
             ),
             const SizedBox(height: 16),
             Row(
@@ -66,7 +75,7 @@ class _ScheduleTimeCardState extends ConsumerState<ScheduleTimeCard> {
                 Expanded(
                   child: Center(
                     child: Text(
-                      '${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}',
+                      displayTimeText,
                       style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.w600,
@@ -75,15 +84,23 @@ class _ScheduleTimeCardState extends ConsumerState<ScheduleTimeCard> {
                   ),
                 ),
                 const SizedBox(width: 16),
-                IncrementButton(icon: Icons.add, onTap: _pickTime),
+                IncrementButton(
+                  icon: Icons.edit_calendar_outlined,
+                  onTap: () => _pickTime(currentHour, currentMin),
+                ),
               ],
             ),
             const SizedBox(height: 16),
             ConfirmButton(
-              isLoading: data.isLoading,
-              onPressed: () => ref
-                  .read(scheduleTimeProvider.notifier)
-                  .updateScheduleTime(hour, minute),
+              onPressed: (_tempHour == null || scheduleAsync.isLoading)
+                  ? null
+                  : () async {
+                      await ref
+                          .read(scheduleTimeProvider.notifier)
+                          .updateScheduleTime(displayHour, displayMin);
+                      setState(() => _tempHour = _tempMinute = null);
+                    },
+              isLoading: scheduleAsync.isLoading,
             ),
           ],
         ),
