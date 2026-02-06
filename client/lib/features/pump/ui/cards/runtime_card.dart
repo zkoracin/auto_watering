@@ -11,32 +11,42 @@ class RuntimeCard extends ConsumerStatefulWidget {
 }
 
 class _RuntimeCardState extends ConsumerState<RuntimeCard> {
-  int pumpSeconds = 30;
+  int? _draftRuntime;
+
+  void _updateDraft(int min, int max, int newValue) {
+    setState(() {
+      _draftRuntime = newValue.clamp(min, max);
+    });
+  }
+
+  void _confirmUpdate() async {
+    if (_draftRuntime == null) return;
+    final valueToSave = _draftRuntime!;
+    await ref.read(runtimeProvider.notifier).updateRuntime(valueToSave);
+    if (mounted) {
+      setState(() => _draftRuntime = null);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final pumpData = ref.watch(runtimeProvider);
-    final current = pumpData.value?.seconds ?? 30;
-    final min = pumpData.value?.min ?? 2;
-    final max = pumpData.value?.max ?? 600;
-
-    pumpSeconds = pumpSeconds.clamp(min, max);
+    final runtimeAsync = ref.watch(runtimeProvider);
+    final remoteRuntime = runtimeAsync.value?.seconds;
+    final remoteMin = runtimeAsync.value?.min ?? 2;
+    final remoteMax = runtimeAsync.value?.max ?? 14;
+    final displayValue = _draftRuntime ?? remoteRuntime ?? remoteMin;
 
     return NumericSettingCard(
       title: 'Current Run Time',
       description:
-          'This means that when the pump is turned on, it will run for $current seconds',
-      value: pumpSeconds,
-      min: min,
-      max: max,
-      isLoading: pumpData.isLoading,
-      onIncrement: () =>
-          setState(() => pumpSeconds = (pumpSeconds + 1).clamp(min, max)),
-      onDecrement: () =>
-          setState(() => pumpSeconds = (pumpSeconds - 1).clamp(min, max)),
-      onConfirm: () {
-        ref.read(runtimeProvider.notifier).updateRuntime(pumpSeconds);
-      },
+          'This means that when the pump is turned on, it will run for ${remoteRuntime ?? remoteMin} seconds',
+      value: displayValue,
+      min: remoteMin,
+      max: remoteMax,
+      isLoading: runtimeAsync.isLoading,
+      onIncrement: () => _updateDraft(remoteMin, remoteMax, (displayValue + 1)),
+      onDecrement: () => _updateDraft(remoteMin, remoteMax, (displayValue - 1)),
+      onConfirm: _confirmUpdate,
     );
   }
 }

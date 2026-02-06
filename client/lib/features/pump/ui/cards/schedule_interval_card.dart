@@ -12,33 +12,43 @@ class ScheduleIntervalCard extends ConsumerStatefulWidget {
 }
 
 class _ScheduleIntervalCardState extends ConsumerState<ScheduleIntervalCard> {
-  int interval = 2;
-  int min = 1;
-  int max = 14;
+  static const int _minInterval = 1;
+  static const int _maxInterval = 14;
+  int? _draftInterval;
+
+  void _updateDraft(int newValue) {
+    setState(() {
+      _draftInterval = newValue.clamp(_minInterval, _maxInterval);
+    });
+  }
+
+  void _confirmUpdate() async {
+    if (_draftInterval == null) return;
+    final valueToSave = _draftInterval!;
+    await ref
+        .read(scheduleIntervalProvider.notifier)
+        .updateScheduleInterval(valueToSave);
+    if (mounted) {
+      setState(() => _draftInterval = null);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final data = ref.watch(scheduleIntervalProvider);
-    final current = data.value?.interval ?? interval;
-
-    interval = interval.clamp(min, max);
+    final intervalAsync = ref.watch(scheduleIntervalProvider);
+    final remoteInterval = intervalAsync.value?.interval;
+    final displayValue = _draftInterval ?? remoteInterval ?? _minInterval;
 
     return NumericSettingCard(
       title: 'Current Scheduled Interval',
-      description: 'Pump will run every $current days',
-      value: interval,
-      min: min,
-      max: max,
-      isLoading: data.isLoading,
-      onIncrement: () =>
-          setState(() => interval = (interval + 1).clamp(min, max)),
-      onDecrement: () =>
-          setState(() => interval = (interval - 1).clamp(min, max)),
-      onConfirm: () {
-        ref
-            .read(scheduleIntervalProvider.notifier)
-            .updateScheduleInterval(interval);
-      },
+      description: 'Pump will run every ${remoteInterval ?? _minInterval} days',
+      value: displayValue,
+      min: _minInterval,
+      max: _maxInterval,
+      isLoading: intervalAsync.isLoading,
+      onIncrement: () => _updateDraft(displayValue + 1),
+      onDecrement: () => _updateDraft(displayValue - 1),
+      onConfirm: _confirmUpdate,
     );
   }
 }
