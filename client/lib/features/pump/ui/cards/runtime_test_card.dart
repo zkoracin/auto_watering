@@ -1,88 +1,48 @@
-import 'dart:async';
 import 'package:client/features/pump/data/pump_providers.dart';
-import 'package:client/features/pump/ui/buttons/test_button.dart';
+import 'package:client/shared/cards/status_card.dart';
+import 'package:client/shared/constants/status_state.dart';
+import 'package:client/shared/countdown_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class RuntimeTestCard extends ConsumerStatefulWidget {
+class RuntimeTestCard extends ConsumerWidget {
   const RuntimeTestCard({super.key});
 
   @override
-  ConsumerState<RuntimeTestCard> createState() => _RuntimeTestCardState();
-}
-
-class _RuntimeTestCardState extends ConsumerState<RuntimeTestCard> {
-  Timer? _timer;
-  int _remainingSeconds = 0;
-
-  void _startCountdown(int seconds) {
-    _timer?.cancel();
-    setState(() => _remainingSeconds = seconds);
-
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (_remainingSeconds <= 1) {
-        timer.cancel();
-        setState(() => _remainingSeconds = 0);
-      } else {
-        setState(() => _remainingSeconds--);
-      }
-    });
-  }
-
-  @override
-  void dispose() {
-    _timer?.cancel();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final colorScheme = Theme.of(context).colorScheme;
     final runtime = ref.watch(runtimeProvider);
     final pumpTest = ref.watch(runtimeTestProvider);
+    final remainingSeconds = ref.watch(countdownProvider);
 
     int seconds = runtime.value?.seconds ?? 2;
 
-    final isLoading = pumpTest.isLoading || _remainingSeconds > 0;
+    final state = pumpTest.maybeMap(
+      loading: (_) => StatusState.testing,
+      error: (_) => StatusState.failure,
+      orElse: () =>
+          remainingSeconds > 0 ? StatusState.testing : StatusState.success,
+    );
+
+    final isRunning = pumpTest.isLoading || remainingSeconds > 0;
 
     String btnText = 'Pump should run for $seconds seconds';
-    if (!pumpTest.hasError && _remainingSeconds > 0) {
-      btnText = 'Pump running... $_remainingSeconds s left';
+    if (!pumpTest.hasError && remainingSeconds > 0) {
+      btnText = 'Pump running... $remainingSeconds s left';
     }
     if (pumpTest.hasError) {
       btnText = 'Pump test failed, cannot connect to pump';
     }
-
-    return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Row(
-          children: [
-            const SizedBox(width: 12),
-            Expanded(
-              child: Text(
-                btnText,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            TestButton(
-              isLoading: isLoading,
-              onPressed: () async {
-                await ref.read(runtimeTestProvider.notifier).runTest();
-                final updatedPumpTest = ref.read(runtimeTestProvider);
-                if (!updatedPumpTest.hasError) {
-                  _startCountdown(seconds);
-                }
-              },
-            ),
-          ],
-        ),
-      ),
+    return StatusCard(
+      icon: state.icon(colorScheme, StatusContext.pump),
+      text: btnText,
+      isLoading: isRunning,
+      onRefresh: () async {
+        await ref.read(runtimeTestProvider.notifier).runTest();
+        if (!ref.read(runtimeTestProvider).hasError) {
+          ref.read(countdownProvider.notifier).start(seconds);
+        }
+      },
     );
   }
 }

@@ -71,6 +71,7 @@ inline void registerPumpRoutes(ESP8266WebServer& server) {
   });
 
   server.on("/pump/schedule", HTTP_GET, [&]() {
+    // @TODO check for start day
     ScheduleEntry schedule = pumpStorageLoadSchedule();
 
     StaticJsonDocument<100> doc;
@@ -82,6 +83,7 @@ inline void registerPumpRoutes(ESP8266WebServer& server) {
   });
 
   server.on("/pump/schedule", HTTP_PUT, [&]() {
+    // @TODO check for start day
     StaticJsonDocument<100> body;
     if (!validateJsonBody(server, "hour", body)) return;
     if (!validateJsonBody(server, "minute", body)) return;

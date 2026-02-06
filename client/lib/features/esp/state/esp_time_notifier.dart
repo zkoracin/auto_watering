@@ -18,4 +18,17 @@ class EspTimeNotifier extends AsyncNotifier<EspTime> {
     );
     return _repository.setTime(currentTime);
   }
+
+  Future<void> refresh() async {
+    state = const AsyncLoading();
+
+    final now = DateTime.now();
+    final currentTime = EspTime(
+      day: now.day,
+      hour: now.hour,
+      minute: now.minute,
+    );
+
+    state = await AsyncValue.guard(() => _repository.setTime(currentTime));
+  }
 }
