@@ -1,22 +1,16 @@
 #pragma once
-#include <ESP8266WebServer.h>
 #include <ArduinoJson.h>
+#include <ESP8266WebServer.h>
 
-inline void sendJson(
-  ESP8266WebServer& server,
-  int statusCode,
-  JsonDocument& doc
-) {
+inline void sendJson(ESP8266WebServer& server, int statusCode, JsonDocument& doc) {
   sendCorsHeaders(server);
   String response;
   serializeJson(doc, response);
   server.send(statusCode, "application/json", response);
 }
 
-inline bool validateJsonBody(
-  ESP8266WebServer& server,
-  const char* requiredKey,
-  StaticJsonDocument<100>& outDoc) {
+inline bool validateJsonBody(ESP8266WebServer& server, const char* requiredKey,
+                             StaticJsonDocument<100>& outDoc) {
 
   if (!server.hasArg("plain")) {
     StaticJsonDocument<100> errorDoc;

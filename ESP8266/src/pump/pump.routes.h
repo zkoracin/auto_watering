@@ -16,7 +16,7 @@ inline void registerPumpRoutes(ESP8266WebServer& server) {
   server.on("/pump", HTTP_PUT, [&]() {
     StaticJsonDocument<100> body;
     if (!validateJsonBody(server, "on", body)) return;
-    
+
     pumpSet(body["on"]);
 
     StaticJsonDocument<100> doc;
@@ -34,9 +34,9 @@ inline void registerPumpRoutes(ESP8266WebServer& server) {
 
   server.on("/pump/runtime", HTTP_GET, [&]() {
     StaticJsonDocument<100> doc;
-    doc["seconds"] = pumpStorageLoadExecutionTime();                             
-    doc["min"] = PUMP_MIN_EXECUTION_TIME_SECONDS;                 
-    doc["max"] = PUMP_MAX_EXECUTION_TIME_SECONDS;                 
+    doc["seconds"] = pumpStorageLoadExecutionTime();
+    doc["min"] = PUMP_MIN_EXECUTION_TIME_SECONDS;
+    doc["max"] = PUMP_MAX_EXECUTION_TIME_SECONDS;
     sendJson(server, 200, doc);
   });
 
@@ -45,16 +45,14 @@ inline void registerPumpRoutes(ESP8266WebServer& server) {
     if (!validateJsonBody(server, "seconds", body)) return;
 
     uint16_t seconds = body["seconds"];
-    seconds = constrain(seconds,
-                        PUMP_MIN_EXECUTION_TIME_SECONDS,
-                        PUMP_MAX_EXECUTION_TIME_SECONDS);
+    seconds = constrain(seconds, PUMP_MIN_EXECUTION_TIME_SECONDS, PUMP_MAX_EXECUTION_TIME_SECONDS);
 
     pumpStorageSaveExecutionTime(seconds);
 
     StaticJsonDocument<100> doc;
     doc["seconds"] = pumpStorageLoadExecutionTime();
-    doc["min"] = PUMP_MIN_EXECUTION_TIME_SECONDS;                 
-    doc["max"] = PUMP_MAX_EXECUTION_TIME_SECONDS;          
+    doc["min"] = PUMP_MIN_EXECUTION_TIME_SECONDS;
+    doc["max"] = PUMP_MAX_EXECUTION_TIME_SECONDS;
     sendJson(server, 200, doc);
   });
 
@@ -105,5 +103,4 @@ inline void registerPumpRoutes(ESP8266WebServer& server) {
     doc["startDay"] = schedule.startDay;
     sendJson(server, 200, doc);
   });
-
 }

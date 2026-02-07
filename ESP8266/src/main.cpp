@@ -1,10 +1,10 @@
-#include <ESP8266WiFi.h>
-#include <ESP8266WebServer.h>
 #include "config/config.h"
-#include "core/wifi_manager.h"
 #include "core/cors.h"
-#include "routes/server_routes.h"
+#include "core/wifi_manager.h"
 #include "pump/pump_storage.h"
+#include "routes/server_routes.h"
+#include <ESP8266WebServer.h>
+#include <ESP8266WiFi.h>
 
 ESP8266WebServer server(80);
 

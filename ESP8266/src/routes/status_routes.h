@@ -20,7 +20,7 @@ inline void registerStatusRoutes(ESP8266WebServer& server) {
     if (!validateJsonBody(server, "day", body)) return;
     if (!validateJsonBody(server, "hour", body)) return;
     if (!validateJsonBody(server, "minute", body)) return;
-    
+
     DeviceTime newTime;
     newTime.day = body["day"];
     newTime.hour = body["hour"];
