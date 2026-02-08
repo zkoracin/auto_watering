@@ -3,19 +3,24 @@
 #include "routes/status_routes.h"
 #include <pump/pump.routes.h>
 
+inline void sendNotFound(ESP8266WebServer& server) {
+  JsonDocument doc;
+  doc["error"] = F("Not found");
+  sendJson(server, 404, doc);
+}
+
 inline void registerRoutes(ESP8266WebServer& server) {
   registerStatusRoutes(server);
   registerPumpRoutes(server);
 
-  server.onNotFound([&]() {
+  server.onNotFound([&server]() {
+    sendCorsHeaders(server);
+
     if (server.method() == HTTP_OPTIONS) {
-      sendCorsHeaders(server);
       server.send(204);
-    } else {
-      sendCorsHeaders(server);
-      StaticJsonDocument<100> doc;
-      doc["error"] = "Not found";
-      sendJson(server, 404, doc);
+      return;
     }
+
+    sendNotFound(server);
   });
 }
