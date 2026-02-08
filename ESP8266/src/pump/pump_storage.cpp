@@ -1,7 +1,6 @@
 #include "pump_storage.h"
-#include "config.h"
+#include "config/config.h"
 #include <EEPROM.h>
-#include <config/config.h>
 
 void pumpStorageInit() {
   EEPROM.begin(EEPROM_SIZE);
