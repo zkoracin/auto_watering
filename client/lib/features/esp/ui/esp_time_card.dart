@@ -21,7 +21,11 @@ class EspTimeCard extends ConsumerWidget {
     String buildText() {
       final baseText = state.text(StatusContext.espTime);
       if (state == StatusState.success && status.hasValue) {
-        final day = status.value?.day ?? 0;
+        // @TODO fix bug related to the days
+      var day = status.value?.day ?? 1;
+        if (day < 0 || day > 7) {
+          day = 1;
+        }
         final hour = status.value?.hour.toString().padLeft(2, '0') ?? '0';
         final minute = status.value?.minute.toString().padLeft(2, '0') ?? '0';
         return '$baseText : ${dayNames[day]} $hour:$minute';

@@ -22,7 +22,7 @@ inline bool validateJsonBody(ESP8266WebServer& server, const char* requiredKey,
 
   DeserializationError error = deserializeJson(outDoc, server.arg(F("plain")));
 
-  if (error || !outDoc[requiredKey].isNull()) {
+  if (error || outDoc[requiredKey].isNull()) {
     JsonDocument errorDoc;
     errorDoc[F("error")] = error ? F("Invalid JSON") : F("Missing required key");
     sendJson(server, 400, errorDoc);
