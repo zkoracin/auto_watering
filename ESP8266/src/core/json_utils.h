@@ -2,26 +2,29 @@
 #include <ArduinoJson.h>
 #include <ESP8266WebServer.h>
 
-inline void sendJson(ESP8266WebServer& server, int statusCode, JsonDocument& doc) {
+inline void sendJson(ESP8266WebServer& server, int statusCode, const JsonDocument& doc) {
   sendCorsHeaders(server);
-  String response;
-  serializeJson(doc, response);
-  server.send(statusCode, "application/json", response);
+  // Stream JSON directly to the client
+  server.setContentLength(measureJson(doc));
+  server.send(statusCode, F("application/json"), "");
+  serializeJson(doc, server.client());
 }
 
 inline bool validateJsonBody(ESP8266WebServer& server, const char* requiredKey,
-                             StaticJsonDocument<100>& outDoc) {
+                             JsonDocument& outDoc) {
 
-  if (!server.hasArg("plain")) {
-    StaticJsonDocument<100> errorDoc;
-    errorDoc["error"] = "Missing body";
+  if (!server.hasArg(F("plain"))) {
+    JsonDocument errorDoc;
+    errorDoc[F("error")] = F("Missing body");
     sendJson(server, 400, errorDoc);
     return false;
   }
 
-  if (deserializeJson(outDoc, server.arg("plain")) || !outDoc.containsKey(requiredKey)) {
-    StaticJsonDocument<100> errorDoc;
-    errorDoc["error"] = "Invalid JSON";
+  DeserializationError error = deserializeJson(outDoc, server.arg(F("plain")));
+
+  if (error || !outDoc[requiredKey].isNull()) {
+    JsonDocument errorDoc;
+    errorDoc[F("error")] = error ? F("Invalid JSON") : F("Missing required key");
     sendJson(server, 400, errorDoc);
     return false;
   }
