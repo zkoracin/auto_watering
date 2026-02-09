@@ -1,7 +1,7 @@
 #pragma once
 #include <ESP8266WiFi.h>
-#include <include/wifi_credentials.h>
-#include <config/config.h>
+#include "config/config.h"
+#include "include/wifi_credentials.h"
 
 inline void connectWiFi() {
   WiFi.begin(ssid, password);

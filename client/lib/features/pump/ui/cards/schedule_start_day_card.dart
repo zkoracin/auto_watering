@@ -13,33 +13,43 @@ class ScheduleStartDayCard extends ConsumerStatefulWidget {
 }
 
 class _ScheduleStartDayCardState extends ConsumerState<ScheduleStartDayCard> {
-  int startDay = 1;
-  final int min = 1;
-  final int max = 7;
+  static const int _min = 1;
+  static const int _max = 7;
+  int? _draftDay;
+
+  void _updateDraft(int newValue) {
+    setState(() {
+      _draftDay = newValue.clamp(_min, _max);
+    });
+  }
+
+  void _confirmUpdate() async {
+    if (_draftDay == null) return;
+    final valueToSave = _draftDay!;
+    await ref
+        .read(scheduleStartDayProvider.notifier)
+        .updateScheduleStartDay(valueToSave);
+    if (mounted) {
+      setState(() => _draftDay = null);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final data = ref.watch(scheduleStartDayProvider);
-    final current = data.value?.startDay ?? startDay;
-
-    startDay = startDay.clamp(min, max);
+    final scheduleAsync = ref.watch(scheduleStartDayProvider);
+    final remoteDay = scheduleAsync.value?.startDay;
+    final displayValue = _draftDay ?? remoteDay ?? _min;
 
     return NumericSettingCard(
       title: 'Pump Start Day',
-      description: 'Pump will start on ${dayNames[current]}',
-      value: startDay,
-      min: min,
-      max: max,
-      isLoading: data.isLoading,
-      onIncrement: () =>
-          setState(() => startDay = (startDay + 1).clamp(min, max)),
-      onDecrement: () =>
-          setState(() => startDay = (startDay - 1).clamp(min, max)),
-      onConfirm: () {
-        ref
-            .read(scheduleStartDayProvider.notifier)
-            .updateScheduleStartDay(startDay);
-      },
+      description: 'Pump will start on ${dayNames[remoteDay ?? _min]}',
+      value: displayValue,
+      min: _min,
+      max: _max,
+      isLoading: scheduleAsync.isLoading,
+      onIncrement: () => _updateDraft(displayValue + 1),
+      onDecrement: () => _updateDraft(displayValue - 1),
+      onConfirm: () => _confirmUpdate(),
     );
   }
 }

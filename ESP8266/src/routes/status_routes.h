@@ -7,28 +7,30 @@
 #include "pump/pump_storage.h"
 
 inline void registerStatusRoutes(ESP8266WebServer& server) {
-  server.on("/status", HTTP_GET, [&]() {
-    StaticJsonDocument<100> doc;
-    doc["status"] = "ok";
+  server.on("/status", HTTP_GET, [&server]() {
+    JsonDocument doc;
+    doc["status"] = F("ok");
     doc["ip"] = WiFi.localIP().toString();
 
     sendJson(server, 200, doc);
   });
 
-  server.on("/setTime", HTTP_POST, [&]() {
-    StaticJsonDocument<100> body;
+  server.on("/setTime", HTTP_POST, [&server]() {
+    JsonDocument body;
     if (!validateJsonBody(server, "day", body)) return;
-    if (!validateJsonBody(server, "hour", body)) return;
-    if (!validateJsonBody(server, "minute", body)) return;
-    
-    DeviceTime newTime;
-    newTime.day = body["day"];
-    newTime.hour = body["hour"];
-    newTime.minute = body["minute"];
+
+    if (body["day"].isNull() || body["hour"].isNull() || body["minute"].isNull()) {
+      JsonDocument err;
+      err["error"] = F("Invalid time values");
+      sendJson(server, 400, err);
+      return;
+    }
+
+    DeviceTime newTime{.day = body["day"], .hour = body["hour"], .minute = body["minute"]};
 
     deviceTimeSave(newTime);
 
-    StaticJsonDocument<100> doc;
+    JsonDocument doc;
     doc["day"] = newTime.day;
     doc["hour"] = newTime.hour;
     doc["minute"] = newTime.minute;
