@@ -5,12 +5,14 @@ class Schedule {
   final int minute;
   final int interval;
   final int startDay;
+  final Set<String> loadingFields;
 
   const Schedule({
     required this.hour,
     required this.minute,
     required this.interval,
     required this.startDay,
+    this.loadingFields = const {},
   });
 
   factory Schedule.fromJson(Map<String, dynamic> json) {
@@ -33,12 +35,19 @@ class Schedule {
 
   TimeOfDay get time => TimeOfDay(hour: hour, minute: minute);
 
-  Schedule copyWith({int? hour, int? minute, int? interval, int? startDay}) {
+  Schedule copyWith({
+    int? hour,
+    int? minute,
+    int? interval,
+    int? startDay,
+    Set<String>? loadingFields,
+  }) {
     return Schedule(
       hour: hour ?? this.hour,
       minute: minute ?? this.minute,
       interval: interval ?? this.interval,
       startDay: startDay ?? this.startDay,
+      loadingFields: loadingFields ?? this.loadingFields,
     );
   }
 }

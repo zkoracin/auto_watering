@@ -25,9 +25,7 @@ class _ScheduleIntervalCardState extends ConsumerState<ScheduleIntervalCard> {
   void _confirmUpdate() async {
     if (_draftInterval == null) return;
     final valueToSave = _draftInterval!;
-    await ref
-        .read(scheduleIntervalProvider.notifier)
-        .updateScheduleInterval(valueToSave);
+    await ref.read(scheduleProvider.notifier).updateInterval(valueToSave);
     if (mounted) {
       setState(() => _draftInterval = null);
     }
@@ -35,9 +33,11 @@ class _ScheduleIntervalCardState extends ConsumerState<ScheduleIntervalCard> {
 
   @override
   Widget build(BuildContext context) {
-    final intervalAsync = ref.watch(scheduleIntervalProvider);
-    final remoteInterval = intervalAsync.value?.interval;
+    final scheduleAsync = ref.watch(scheduleProvider);
+    final remoteInterval = scheduleAsync.value?.interval;
     final displayValue = _draftInterval ?? remoteInterval ?? _minInterval;
+    final isLoading =
+        scheduleAsync.value?.loadingFields.contains('interval') ?? false;
 
     return NumericSettingCard(
       title: 'Current Scheduled Interval',
@@ -45,7 +45,7 @@ class _ScheduleIntervalCardState extends ConsumerState<ScheduleIntervalCard> {
       value: displayValue,
       min: _minInterval,
       max: _maxInterval,
-      isLoading: intervalAsync.isLoading,
+      isLoading: scheduleAsync.isLoading || isLoading,
       onIncrement: () => _updateDraft(displayValue + 1),
       onDecrement: () => _updateDraft(displayValue - 1),
       onConfirm: _confirmUpdate,

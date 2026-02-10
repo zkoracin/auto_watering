@@ -39,11 +39,13 @@ class _ScheduleTimeCardState extends ConsumerState<ScheduleTimeCard> {
 
   @override
   Widget build(BuildContext context) {
-    final scheduleAsync = ref.watch(scheduleTimeProvider);
+    final scheduleAsync = ref.watch(scheduleProvider);
     final currentHour = scheduleAsync.value?.hour ?? 0;
     final currentMin = scheduleAsync.value?.minute ?? 0;
     final displayHour = _tempHour ?? currentHour;
     final displayMin = _tempMinute ?? currentMin;
+    final isLoading =
+        scheduleAsync.value?.loadingFields.contains('time') ?? false;
 
     final currentTimeText =
         '${currentHour.toString().padLeft(2, '0')}:${currentMin.toString().padLeft(2, '0')}';
@@ -96,11 +98,11 @@ class _ScheduleTimeCardState extends ConsumerState<ScheduleTimeCard> {
                   ? null
                   : () async {
                       await ref
-                          .read(scheduleTimeProvider.notifier)
-                          .updateScheduleTime(displayHour, displayMin);
+                          .read(scheduleProvider.notifier)
+                          .updateTime(displayHour, displayMin);
                       setState(() => _tempHour = _tempMinute = null);
                     },
-              isLoading: scheduleAsync.isLoading,
+              isLoading: scheduleAsync.isLoading || isLoading,
             ),
           ],
         ),

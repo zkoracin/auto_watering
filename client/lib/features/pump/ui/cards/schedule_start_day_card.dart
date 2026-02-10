@@ -26,9 +26,7 @@ class _ScheduleStartDayCardState extends ConsumerState<ScheduleStartDayCard> {
   void _confirmUpdate() async {
     if (_draftDay == null) return;
     final valueToSave = _draftDay!;
-    await ref
-        .read(scheduleStartDayProvider.notifier)
-        .updateScheduleStartDay(valueToSave);
+    await ref.read(scheduleProvider.notifier).updateStartDay(valueToSave);
     if (mounted) {
       setState(() => _draftDay = null);
     }
@@ -36,9 +34,11 @@ class _ScheduleStartDayCardState extends ConsumerState<ScheduleStartDayCard> {
 
   @override
   Widget build(BuildContext context) {
-    final scheduleAsync = ref.watch(scheduleStartDayProvider);
+    final scheduleAsync = ref.watch(scheduleProvider);
     final remoteDay = scheduleAsync.value?.startDay;
     final displayValue = _draftDay ?? remoteDay ?? _min;
+    final isLoading =
+        scheduleAsync.value?.loadingFields.contains('startDay') ?? false;
 
     return NumericSettingCard(
       title: 'Pump Start Day',
@@ -46,7 +46,7 @@ class _ScheduleStartDayCardState extends ConsumerState<ScheduleStartDayCard> {
       value: displayValue,
       min: _min,
       max: _max,
-      isLoading: scheduleAsync.isLoading,
+      isLoading: scheduleAsync.isLoading || isLoading,
       onIncrement: () => _updateDraft(displayValue + 1),
       onDecrement: () => _updateDraft(displayValue - 1),
       onConfirm: () => _confirmUpdate(),
