@@ -10,25 +10,21 @@ class EspTimeNotifier extends AsyncNotifier<EspTime> {
   @override
   FutureOr<EspTime> build() async {
     _repository = ref.read(espRepositoryProvider);
-    DateTime now = DateTime.now();
-    EspTime currentTime = EspTime(
-      day: now.day,
-      hour: now.hour,
-      minute: now.minute,
-    );
-    return _repository.setTime(currentTime);
+    return _updateEspTime();
   }
 
   Future<void> refresh() async {
     state = const AsyncLoading();
+    state = await AsyncValue.guard(() => _updateEspTime());
+  }
 
+  Future<EspTime> _updateEspTime() {
     final now = DateTime.now();
     final currentTime = EspTime(
-      day: now.day,
+      day: now.weekday,
       hour: now.hour,
       minute: now.minute,
     );
-
-    state = await AsyncValue.guard(() => _repository.setTime(currentTime));
+    return _repository.setTime(currentTime);
   }
 }
