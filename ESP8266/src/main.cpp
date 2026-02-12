@@ -14,15 +14,12 @@ void setup() {
 
   pumpInit();
   pumpStorageInit();
-
-  Serial.println();
-  Serial.println("Connecting to WiFi...");
   connectWiFi();
 
   registerRoutes(server);
 
   server.begin();
-  Serial.println("HTTP server started");
+  LOG_INFO("SERVER", "HTTP SERVER STARTED");
 }
 
 void loop() {

@@ -8,6 +8,7 @@
 
 inline void registerStatusRoutes(ESP8266WebServer& server) {
   server.on("/status", HTTP_GET, [&server]() {
+    LOG_INFO("SERVER", "GET STATUS");
     JsonDocument doc;
     doc["status"] = F("ok");
     doc["ip"] = WiFi.localIP().toString();
@@ -16,6 +17,7 @@ inline void registerStatusRoutes(ESP8266WebServer& server) {
   });
 
   server.on("/setTime", HTTP_POST, [&server]() {
+    LOG_INFO("SERVER", "GET SET TIME");
     JsonDocument body;
     if (!validateJsonBody(server, "day", body)) return;
 

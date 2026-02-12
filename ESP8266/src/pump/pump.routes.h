@@ -22,9 +22,13 @@ void sendPumpSchedule(ESP8266WebServer& server, const ScheduleEntry& schedule) {
 }
 
 inline void registerPumpRoutes(ESP8266WebServer& server) {
-  server.on("/pump", HTTP_GET, [&server]() { sendPumpState(server); });
+  server.on("/pump", HTTP_GET, [&server]() {
+    LOG_INFO("SERVER", "GET PUMP");
+    sendPumpState(server);
+  });
 
   server.on("/pump", HTTP_PUT, [&server]() {
+    LOG_INFO("SERVER", "PUT PUMP");
     JsonDocument body;
     if (validateJsonBody(server, "on", body)) {
       pumpSet(body["on"]);
@@ -33,6 +37,7 @@ inline void registerPumpRoutes(ESP8266WebServer& server) {
   });
 
   server.on("/pump/toggle", HTTP_POST, [&server]() {
+    LOG_INFO("SERVER", "POST PUMP");
     pumpToggle();
     sendPumpState(server);
   });
@@ -45,9 +50,13 @@ inline void registerPumpRoutes(ESP8266WebServer& server) {
     sendJson(server, 200, doc);
   };
 
-  server.on("/pump/runtime", HTTP_GET, sendRuntime);
+  server.on("/pump/runtime", HTTP_GET, [&server, sendRuntime]() {
+    LOG_INFO("SERVER", "GET PUMP/RUNTIME");
+    sendRuntime();
+  });
 
   server.on("/pump/runtime", HTTP_PUT, [&server, sendRuntime]() {
+    LOG_INFO("SERVER", "PUT PUMP/RUNTIME");
     JsonDocument body;
 
     if (validateJsonBody(server, "seconds", body)) {
@@ -60,6 +69,7 @@ inline void registerPumpRoutes(ESP8266WebServer& server) {
   });
 
   server.on("/pump/runtime-test", HTTP_POST, [&server]() {
+    LOG_INFO("SERVER", "POST PUMP/RUNTIME-TEST");
     uint16_t seconds = pumpStorageLoadExecutionTime();
     pumpRunForSeconds(seconds);
 
@@ -70,10 +80,12 @@ inline void registerPumpRoutes(ESP8266WebServer& server) {
   });
 
   server.on("/pump/schedule", HTTP_GET, [&server]() {
+    LOG_INFO("SERVER", "GET PUMP/SCHEDLE");
     sendPumpSchedule(server, pumpStorageLoadSchedule());
   });
 
   server.on("/pump/schedule", HTTP_PUT, [&server]() {
+    LOG_INFO("SERVER", "PUT PUMP/SCHEDULE");
     JsonDocument body;
     if (!validateJsonBody(server, "hour", body)) return;
 

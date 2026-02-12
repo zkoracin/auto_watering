@@ -10,7 +10,9 @@
 #define PUMP_MIN_EXECUTION_TIME_SECONDS 2
 #define PUMP_MAX_EXECUTION_TIME_SECONDS 600
 
-#define EEPROM_SIZE (EEPROM_ADDR_DEVICE_TIME + sizeof(DeviceTime))
 #define EEPROM_ADDR_PUMP_SECONDS 0
 #define EEPROM_ADDR_PUMP_SCHEDULE (EEPROM_ADDR_PUMP_SECONDS + sizeof(uint16_t))
 #define EEPROM_ADDR_DEVICE_TIME (EEPROM_ADDR_PUMP_SCHEDULE + sizeof(ScheduleEntry))
+#define EEPROM_SIZE (EEPROM_ADDR_DEVICE_TIME + sizeof(DeviceTime))
+
+#define LOG_INFO(tag, msg) Serial.println(String("[") + tag + "] " + msg)
