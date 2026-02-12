@@ -10,23 +10,30 @@ inline void sendJson(ESP8266WebServer& server, int statusCode, const JsonDocumen
   serializeJson(doc, server.client());
 }
 
-inline bool validateJsonBody(ESP8266WebServer& server, const char* requiredKey,
-                             JsonDocument& outDoc) {
+inline void sendError(ESP8266WebServer& server, int code, const __FlashStringHelper* message) {
+  JsonDocument doc;
+  doc[F("error")] = message;
+  sendJson(server, code, doc);
+}
 
+inline bool validateJsonBody(ESP8266WebServer& server, JsonDocument& outDoc,
+                             std::initializer_list<const char*> requiredKeys = {}) {
   if (!server.hasArg(F("plain"))) {
-    JsonDocument errorDoc;
-    errorDoc[F("error")] = F("Missing body");
-    sendJson(server, 400, errorDoc);
+    sendError(server, 400, F("Missing body"));
     return false;
   }
 
   DeserializationError error = deserializeJson(outDoc, server.arg(F("plain")));
-
-  if (error || outDoc[requiredKey].isNull()) {
-    JsonDocument errorDoc;
-    errorDoc[F("error")] = error ? F("Invalid JSON") : F("Missing required key");
-    sendJson(server, 400, errorDoc);
+  if (error) {
+    sendError(server, 400, F("Invalid JSON"));
     return false;
+  }
+
+  for (const char* key : requiredKeys) {
+    if (outDoc[key].isNull()) {
+      sendError(server, 400, F("Missing required field"));
+      return false;
+    }
   }
 
   return true;
