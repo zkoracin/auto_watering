@@ -4,7 +4,7 @@
 #include <ESP8266WiFi.h>
 #include "core/cors.h"
 #include "core/json_utils.h"
-#include "pump/pump_storage.h"
+#include "storage/device_storage.h"
 
 inline void registerStatusRoutes(ESP8266WebServer& server) {
   server.on("/status", HTTP_GET, [&server]() {
@@ -30,7 +30,8 @@ inline void registerStatusRoutes(ESP8266WebServer& server) {
 
     DeviceTime newTime{.day = body["day"], .hour = body["hour"], .minute = body["minute"]};
 
-    deviceTimeSave(newTime);
+    device.setDeviceTime(newTime);
+    device.saveDeviceTime();
 
     JsonDocument doc;
     doc["day"] = newTime.day;

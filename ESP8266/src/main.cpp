@@ -5,12 +5,27 @@
 #include "routes/server_routes.h"
 #include <ESP8266WebServer.h>
 #include <ESP8266WiFi.h>
+#include "storage/storage_manager.h"
+#include "storage/device_storage.h"
+
+StorageManager Storage;
+DeviceStorage device;
 
 ESP8266WebServer server(80);
 
 void setup() {
   Serial.begin(SERIAL_BAUD);
-  delay(1000);
+  delay(5000);
+
+  LOG_INFO("STORAGE", "INITIALIZING STORAGE");
+  Storage.begin();
+
+  LOG_INFO("STORAGE", "LOADING DEVICE TIME");
+  device.loadDeviceTime();
+
+  DeviceTime dt = device.getDeviceTime();
+  LOG_INFO("STORAGE", String("DEVICE TIME: ") + "day=" + dt.day + ", hour=" + dt.hour +
+                          ", minute=" + dt.minute);
 
   pumpInit();
   pumpStorageInit();
