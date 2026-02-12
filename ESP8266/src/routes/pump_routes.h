@@ -2,9 +2,9 @@
 #include <ESP8266WebServer.h>
 #include <ArduinoJson.h>
 #include "pump/pump.h"
-#include "pump/pump_storage.h"
 #include "core/cors.h"
 #include "core/json_utils.h"
+#include "storage/pump_storage.h"
 
 inline void sendPumpState(ESP8266WebServer& server) {
   JsonDocument doc;
@@ -46,9 +46,9 @@ inline void registerPumpRoutes(ESP8266WebServer& server) {
 
   auto sendRuntime = [&server]() {
     JsonDocument doc;
-    doc["seconds"] = pumpStorageLoadExecutionTime();
-    doc["min"] = PUMP_MIN_EXECUTION_TIME_SECONDS;
-    doc["max"] = PUMP_MAX_EXECUTION_TIME_SECONDS;
+    doc["seconds"] = pump.getRuntime();
+    doc["min"] = pump.getRuntimeLimits().min;
+    doc["max"] = pump.getRuntimeLimits().max;
     sendJson(server, 200, doc);
   };
 
@@ -65,14 +65,14 @@ inline void registerPumpRoutes(ESP8266WebServer& server) {
       return;
     };
     uint16_t seconds = doc["seconds"];
-    seconds = constrain(seconds, PUMP_MIN_EXECUTION_TIME_SECONDS, PUMP_MAX_EXECUTION_TIME_SECONDS);
-    pumpStorageSaveExecutionTime(seconds);
+    pump.setRuntime(seconds);
+    pump.saveRuntime();
     sendRuntime();
   });
 
   server.on("/pump/runtime-test", HTTP_POST, [&server]() {
     LOG_INFO("SERVER", "POST PUMP/RUNTIME-TEST");
-    uint16_t seconds = pumpStorageLoadExecutionTime();
+    uint16_t seconds = pump.getRuntime();
     pumpRunForSeconds(seconds);
 
     JsonDocument doc;
@@ -83,7 +83,7 @@ inline void registerPumpRoutes(ESP8266WebServer& server) {
 
   server.on("/pump/schedule", HTTP_GET, [&server]() {
     LOG_INFO("SERVER", "GET PUMP/SCHEDLE");
-    sendPumpSchedule(server, pumpStorageLoadSchedule());
+    sendPumpSchedule(server, pump.getSchedule());
   });
 
   server.on("/pump/schedule", HTTP_PUT, [&server]() {
@@ -98,7 +98,8 @@ inline void registerPumpRoutes(ESP8266WebServer& server) {
                            .interval = doc["interval"],
                            .startDay = doc["startDay"]};
 
-    pumpStorageSaveSchedule(schedule);
+    pump.setSchedule(schedule);
+    pump.saveSchedule();
     sendPumpSchedule(server, schedule);
   });
 }

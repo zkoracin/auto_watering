@@ -2,6 +2,7 @@
 #include <Arduino.h>
 #include <EEPROM.h>
 #include <config/config.h>
+#include "models/storage_models.h"
 
 class StorageManager {
 public:

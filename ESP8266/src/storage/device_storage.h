@@ -1,7 +1,6 @@
 #pragma once
 #include <Arduino.h>
 #include "storage_manager.h"
-#include "models/storage_models.h"
 
 class DeviceStorage {
 public:
