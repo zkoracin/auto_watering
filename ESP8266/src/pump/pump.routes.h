@@ -70,12 +70,10 @@ inline void registerPumpRoutes(ESP8266WebServer& server) {
   });
 
   server.on("/pump/schedule", HTTP_GET, [&server]() {
-    // @TODO check for start day
     sendPumpSchedule(server, pumpStorageLoadSchedule());
   });
 
   server.on("/pump/schedule", HTTP_PUT, [&server]() {
-    // @TODO check for start day
     JsonDocument body;
     if (!validateJsonBody(server, "hour", body)) return;
 

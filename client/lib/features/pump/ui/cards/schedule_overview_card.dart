@@ -13,15 +13,11 @@ class ScheduleOverviewCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final timeAsync = ref.watch(scheduleTimeProvider);
-    final intervalAsync = ref.watch(scheduleIntervalProvider);
-    final dayAsync = ref.watch(scheduleStartDayProvider);
+    final scheduleAsync = ref.watch(scheduleProvider);
     final runtimeAsync = ref.watch(runtimeProvider);
 
     final isLoading = [
-      timeAsync,
-      intervalAsync,
-      dayAsync,
+      scheduleAsync,
       runtimeAsync,
     ].any((state) => state.isLoading);
 
@@ -40,15 +36,15 @@ class ScheduleOverviewCard extends ConsumerWidget {
             ),
             const SizedBox(height: 12),
             Text(
-              'Start Time: ${_formatTime(timeAsync.value?.hour, timeAsync.value?.minute)}',
+              'Start Time: ${_formatTime(scheduleAsync.value?.hour, scheduleAsync.value?.minute)}',
               style: const TextStyle(fontSize: 16),
             ),
             Text(
-              'Interval: ${intervalAsync.value?.interval ?? 0} days',
+              'Interval: ${scheduleAsync.value?.interval ?? 0} days',
               style: const TextStyle(fontSize: 16),
             ),
             Text(
-              'Start Day: ${dayNames[dayAsync.value?.startDay ?? 0]}',
+              'Start Day: ${dayNames[scheduleAsync.value?.startDay ?? 0]}',
               style: const TextStyle(fontSize: 16),
             ),
             const SizedBox(height: 12),
