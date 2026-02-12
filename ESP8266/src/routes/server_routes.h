@@ -1,7 +1,7 @@
 #pragma once
 #include <ESP8266WebServer.h>
 #include "routes/device_routes.h"
-#include "pump/pump.routes.h"
+#include "routes/pump_routes.h"
 
 inline void sendNotFound(ESP8266WebServer& server) {
   JsonDocument doc;

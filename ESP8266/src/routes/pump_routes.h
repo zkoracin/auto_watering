@@ -1,8 +1,8 @@
 #pragma once
 #include <ESP8266WebServer.h>
 #include <ArduinoJson.h>
-#include "pump.h"
-#include "pump_storage.h"
+#include "pump/pump.h"
+#include "pump/pump_storage.h"
 #include "core/cors.h"
 #include "core/json_utils.h"
 
