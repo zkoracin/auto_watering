@@ -29,11 +29,13 @@ inline void registerPumpRoutes(ESP8266WebServer& server) {
 
   server.on("/pump", HTTP_PUT, [&server]() {
     LOG_INFO("SERVER", "PUT PUMP");
-    JsonDocument body;
-    if (validateJsonBody(server, "on", body)) {
-      pumpSet(body["on"]);
-      sendPumpState(server);
-    }
+    JsonDocument doc;
+    if (!validateJsonBody(server, doc, {"on"})) {
+      LOG_INFO("SERVER", "PUT PUMP not valid request");
+      return;
+    };
+    pumpSet(doc["on"]);
+    sendPumpState(server);
   });
 
   server.on("/pump/toggle", HTTP_POST, [&server]() {
@@ -57,15 +59,15 @@ inline void registerPumpRoutes(ESP8266WebServer& server) {
 
   server.on("/pump/runtime", HTTP_PUT, [&server, sendRuntime]() {
     LOG_INFO("SERVER", "PUT PUMP/RUNTIME");
-    JsonDocument body;
-
-    if (validateJsonBody(server, "seconds", body)) {
-      uint16_t seconds = body["seconds"];
-      seconds =
-          constrain(seconds, PUMP_MIN_EXECUTION_TIME_SECONDS, PUMP_MAX_EXECUTION_TIME_SECONDS);
-      pumpStorageSaveExecutionTime(seconds);
-      sendRuntime();
-    }
+    JsonDocument doc;
+    if (!validateJsonBody(server, doc, {"seconds"})) {
+      LOG_INFO("SERVER", "PUT PUMP/RUNTIME not valid request");
+      return;
+    };
+    uint16_t seconds = doc["seconds"];
+    seconds = constrain(seconds, PUMP_MIN_EXECUTION_TIME_SECONDS, PUMP_MAX_EXECUTION_TIME_SECONDS);
+    pumpStorageSaveExecutionTime(seconds);
+    sendRuntime();
   });
 
   server.on("/pump/runtime-test", HTTP_POST, [&server]() {
@@ -86,21 +88,15 @@ inline void registerPumpRoutes(ESP8266WebServer& server) {
 
   server.on("/pump/schedule", HTTP_PUT, [&server]() {
     LOG_INFO("SERVER", "PUT PUMP/SCHEDULE");
-    JsonDocument body;
-    if (!validateJsonBody(server, "hour", body)) return;
-
-    if (body["hour"].isNull() || body["minute"].isNull() || body["interval"].isNull() ||
-        body["startDay"].isNull()) {
-      JsonDocument err;
-      err["error"] = F("Invalid schedule");
-      sendJson(server, 400, err);
+    JsonDocument doc;
+    if (!validateJsonBody(server, doc, {"startDay", "hour", "minute", "interval"})) {
+      LOG_INFO("SERVER", "PUT PUMP/SCHEDULE not valid request");
       return;
     }
-
-    ScheduleEntry schedule = {.hour = body["hour"],
-                              .minute = body["minute"],
-                              .interval = body["interval"],
-                              .startDay = body["startDay"]};
+    ScheduleEntry schedule{.hour = doc["hour"],
+                           .minute = doc["minute"],
+                           .interval = doc["interval"],
+                           .startDay = doc["startDay"]};
 
     pumpStorageSaveSchedule(schedule);
     sendPumpSchedule(server, schedule);

@@ -17,23 +17,18 @@ inline void registerStatusRoutes(ESP8266WebServer& server) {
   });
 
   server.on("/setTime", HTTP_POST, [&server]() {
-    LOG_INFO("SERVER", "GET SET TIME");
-    JsonDocument body;
-    if (!validateJsonBody(server, "day", body)) return;
-
-    if (body["day"].isNull() || body["hour"].isNull() || body["minute"].isNull()) {
-      JsonDocument err;
-      err["error"] = F("Invalid time values");
-      sendJson(server, 400, err);
+    LOG_INFO("SERVER", "POST SET TIME");
+    JsonDocument doc;
+    if (!validateJsonBody(server, doc, {"day", "hour", "minute"})) {
+      LOG_INFO("SERVER", "POST SET TIME not valid");
       return;
-    }
+    };
 
-    DeviceTime newTime{.day = body["day"], .hour = body["hour"], .minute = body["minute"]};
+    DeviceTime newTime{.day = doc["day"], .hour = doc["hour"], .minute = doc["minute"]};
 
     device.setDeviceTime(newTime);
     device.saveDeviceTime();
 
-    JsonDocument doc;
     doc["day"] = newTime.day;
     doc["hour"] = newTime.hour;
     doc["minute"] = newTime.minute;

@@ -45,7 +45,8 @@ class _ScheduleIntervalCardState extends ConsumerState<ScheduleIntervalCard> {
       value: displayValue,
       min: _minInterval,
       max: _maxInterval,
-      isLoading: scheduleAsync.isLoading || isLoading,
+      // @TODO NEED TO HANDLE INVALID FROM THE SERVER FOR ALL THE BUTTONS
+      isLoading: scheduleAsync.isLoading || isLoading || scheduleAsync.hasError,
       onIncrement: () => _updateDraft(displayValue + 1),
       onDecrement: () => _updateDraft(displayValue - 1),
       onConfirm: _confirmUpdate,
