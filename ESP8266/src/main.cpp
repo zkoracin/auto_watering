@@ -43,6 +43,7 @@ void setup() {
   LOG_INFO("PUMP", "PUMP INITIALIZED");
 
   pumpScheduler.begin();
+  pump.loadSchedule();
   LOG_INFO("SCHEDULER", "SCHEDULER INITIALIZED");
 
   connectWiFi();

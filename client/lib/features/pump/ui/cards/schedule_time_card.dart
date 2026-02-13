@@ -56,9 +56,8 @@ class _ScheduleTimeCardState extends ConsumerState<ScheduleTimeCard> {
     final bool isTimeChanged =
         _tempHour != null &&
         (_tempHour != currentHour || _tempMinute != currentMin);
-    final bool isBusy =
-        scheduleAsync.isLoading || scheduleAsync.hasError || isLoading;
-    final bool canSave = isTimeChanged && !isBusy;
+    final bool isBusy = scheduleAsync.isLoading || isLoading;
+    final bool canSave = isTimeChanged && !isBusy && !scheduleAsync.hasError;
 
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
