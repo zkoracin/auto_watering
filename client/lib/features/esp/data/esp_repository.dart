@@ -4,16 +4,27 @@ import 'package:client/features/esp/domain/esp_time.dart';
 
 class EspRepository {
   final ApiClient _api;
+  static const String _basePath = '/device';
 
   EspRepository(this._api);
 
   Future<EspStatus> getStatus() {
-    return _api.get('/status', mapper: (data) => EspStatus.fromJson(data));
+    return _api.get(
+      '$_basePath/status',
+      mapper: (data) => EspStatus.fromJson(data),
+    );
+  }
+
+  Future<EspTime> getTime() {
+    return _api.get(
+      '$_basePath/time',
+      mapper: (data) => EspTime.fromJson(data),
+    );
   }
 
   Future<EspTime> setTime(EspTime time) {
     return _api.post(
-      '/setTime',
+      '$_basePath/time',
       data: time.toJson(),
       mapper: (data) => EspTime.fromJson(data),
     );

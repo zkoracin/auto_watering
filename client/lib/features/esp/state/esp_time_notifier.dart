@@ -5,30 +5,19 @@ import 'package:client/features/esp/domain/esp_time.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class EspTimeNotifier extends AsyncNotifier<EspTime> {
-  late final EspRepository _repository;
+  EspRepository get _repository => ref.read(espRepositoryProvider);
 
   @override
-  FutureOr<EspTime> build() async {
-    _repository = ref.read(espRepositoryProvider);
-    DateTime now = DateTime.now();
-    EspTime currentTime = EspTime(
-      day: now.day,
-      hour: now.hour,
-      minute: now.minute,
-    );
-    return _repository.setTime(currentTime);
-  }
+  FutureOr<EspTime> build() async => _repository.getTime();
 
-  Future<void> refresh() async {
+  Future<void> updateEspTime() async {
     state = const AsyncLoading();
-
     final now = DateTime.now();
     final currentTime = EspTime(
-      day: now.day,
+      day: now.weekday,
       hour: now.hour,
       minute: now.minute,
     );
-
     state = await AsyncValue.guard(() => _repository.setTime(currentTime));
   }
 }

@@ -8,12 +8,14 @@ class StatusCard extends StatelessWidget {
     required this.text,
     required this.isLoading,
     required this.onRefresh,
+    this.btnText = 'Test',
   });
 
   final Icon icon;
   final String text;
   final bool isLoading;
-  final VoidCallback onRefresh;
+  final VoidCallback? onRefresh;
+  final String btnText;
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +38,11 @@ class StatusCard extends StatelessWidget {
                 ),
               ),
             ),
-            TestButton(isLoading: isLoading, onPressed: onRefresh),
+            TestButton(
+              isLoading: isLoading,
+              onPressed: onRefresh,
+              btnText: btnText,
+            ),
           ],
         ),
       ),

@@ -39,17 +39,25 @@ class _ScheduleTimeCardState extends ConsumerState<ScheduleTimeCard> {
 
   @override
   Widget build(BuildContext context) {
-    final scheduleAsync = ref.watch(scheduleTimeProvider);
+    final scheduleAsync = ref.watch(scheduleProvider);
     final currentHour = scheduleAsync.value?.hour ?? 0;
     final currentMin = scheduleAsync.value?.minute ?? 0;
     final displayHour = _tempHour ?? currentHour;
     final displayMin = _tempMinute ?? currentMin;
+    final isLoading =
+        scheduleAsync.value?.loadingFields.contains('time') ?? false;
 
     final currentTimeText =
         '${currentHour.toString().padLeft(2, '0')}:${currentMin.toString().padLeft(2, '0')}';
 
     final displayTimeText =
         '${displayHour.toString().padLeft(2, '0')}:${displayMin.toString().padLeft(2, '0')}';
+
+    final bool isTimeChanged =
+        _tempHour != null &&
+        (_tempHour != currentHour || _tempMinute != currentMin);
+    final bool isBusy = scheduleAsync.isLoading || isLoading;
+    final bool canSave = isTimeChanged && !isBusy && !scheduleAsync.hasError;
 
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -92,15 +100,18 @@ class _ScheduleTimeCardState extends ConsumerState<ScheduleTimeCard> {
             ),
             const SizedBox(height: 16),
             ConfirmButton(
-              onPressed: (_tempHour == null || scheduleAsync.isLoading)
+              onPressed: !canSave
                   ? null
                   : () async {
                       await ref
-                          .read(scheduleTimeProvider.notifier)
-                          .updateScheduleTime(displayHour, displayMin);
-                      setState(() => _tempHour = _tempMinute = null);
+                          .read(scheduleProvider.notifier)
+                          .updateTime(displayHour, displayMin);
+                      setState(() {
+                        _tempHour = null;
+                        _tempMinute = null;
+                      });
                     },
-              isLoading: scheduleAsync.isLoading,
+              isLoading: isBusy,
             ),
           ],
         ),

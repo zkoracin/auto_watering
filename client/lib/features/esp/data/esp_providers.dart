@@ -6,17 +6,15 @@ import 'package:client/features/esp/state/esp_status_notifier.dart';
 import 'package:client/features/esp/state/esp_time_notifier.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-final espRepositoryProvider = Provider<EspRepository>((ref) {
-  return EspRepository(ref.watch(apiClientProvider));
-});
+final espRepositoryProvider = Provider<EspRepository>(
+  (ref) => EspRepository(ref.read(apiClientProvider)),
+);
 
 final espStatusNotifierProvider =
-    AsyncNotifierProvider<EspStatusNotifier, EspStatus>(() {
-      return EspStatusNotifier();
-    });
+    AsyncNotifierProvider<EspStatusNotifier, EspStatus>(
+      () => EspStatusNotifier(),
+    );
 
 final espTimeNotifierProvider = AsyncNotifierProvider<EspTimeNotifier, EspTime>(
-  () {
-    return EspTimeNotifier();
-  },
+  () => EspTimeNotifier(),
 );

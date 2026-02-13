@@ -1,43 +1,55 @@
 import 'package:client/features/esp/data/esp_providers.dart';
 import 'package:client/shared/cards/status_card.dart';
 import 'package:client/shared/constants/day_names.dart';
+import 'package:client/shared/constants/page_modes.dart';
 import 'package:client/shared/constants/status_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class EspTimeCard extends ConsumerWidget {
-  const EspTimeCard({super.key});
+  const EspTimeCard({super.key, required this.mode});
+
+  final PageMode mode;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final colorScheme = Theme.of(context).colorScheme;
-    final status = ref.watch(espTimeNotifierProvider);
-    final state = status.maybeMap(
+    final statusAsync = ref.watch(espTimeNotifierProvider);
+    final state = statusAsync.maybeMap(
       loading: (_) => StatusState.testing,
       error: (_) => StatusState.failure,
       orElse: () => StatusState.success,
     );
 
-    String buildText() {
-      final baseText = state.text(StatusContext.espTime);
-      if (state == StatusState.success && status.hasValue) {
-        // @TODO fix bug related to the days
-      var day = status.value?.day ?? 1;
-        if (day < 0 || day > 7) {
-          day = 1;
-        }
-        final hour = status.value?.hour.toString().padLeft(2, '0') ?? '0';
-        final minute = status.value?.minute.toString().padLeft(2, '0') ?? '0';
-        return '$baseText : ${dayNames[day]} $hour:$minute';
-      }
-      return baseText;
-    }
+    final displayText = _getFormattedText(state, statusAsync.value);
 
     return StatusCard(
       icon: state.icon(colorScheme, StatusContext.espTime),
-      text: buildText(),
-      isLoading: status.isLoading || status.isRefreshing,
-      onRefresh: () => ref.read(espTimeNotifierProvider.notifier).refresh(),
+      text: displayText,
+      btnText: mode == PageMode.status ? 'Refresh' : 'Sync',
+      isLoading: statusAsync.isLoading || statusAsync.isRefreshing,
+      onRefresh: statusAsync.hasError ? null : () => _handleAction(ref),
     );
+  }
+
+  String _getFormattedText(StatusState state, dynamic value) {
+    final baseText = state.text(StatusContext.espTime);
+
+    if (state == StatusState.success && value != null) {
+      final day = value.day ?? 1;
+      final hour = value.hour.toString().padLeft(2, '0');
+      final minute = value.minute.toString().padLeft(2, '0');
+      return '$baseText : ${dayNames[day]} $hour:$minute';
+    }
+
+    return baseText;
+  }
+
+  void _handleAction(WidgetRef ref) {
+    if (mode == PageMode.status) {
+      ref.invalidate(espTimeNotifierProvider);
+    } else {
+      ref.read(espTimeNotifierProvider.notifier).updateEspTime();
+    }
   }
 }

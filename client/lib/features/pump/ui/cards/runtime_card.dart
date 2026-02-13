@@ -1,5 +1,6 @@
 import 'package:client/features/pump/data/pump_providers.dart';
 import 'package:client/shared/cards/numeric_setting_card.dart';
+import 'package:client/shared/confirm_btn_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -46,7 +47,10 @@ class _RuntimeCardState extends ConsumerState<RuntimeCard> {
       isLoading: runtimeAsync.isLoading,
       onIncrement: () => _updateDraft(remoteMin, remoteMax, (displayValue + 1)),
       onDecrement: () => _updateDraft(remoteMin, remoteMax, (displayValue - 1)),
-      onConfirm: _confirmUpdate,
+      onConfirm:
+          ConfirmBtnState.canConfirm(runtimeAsync, _draftRuntime, remoteRuntime)
+          ? _confirmUpdate
+          : null,
     );
   }
 }
