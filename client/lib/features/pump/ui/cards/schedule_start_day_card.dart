@@ -1,5 +1,6 @@
 import 'package:client/features/pump/data/pump_providers.dart';
 import 'package:client/shared/cards/numeric_setting_card.dart';
+import 'package:client/shared/confirm_btn_state.dart';
 import 'package:client/shared/constants/day_names.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -49,7 +50,9 @@ class _ScheduleStartDayCardState extends ConsumerState<ScheduleStartDayCard> {
       isLoading: scheduleAsync.isLoading || isLoading,
       onIncrement: () => _updateDraft(displayValue + 1),
       onDecrement: () => _updateDraft(displayValue - 1),
-      onConfirm: () => _confirmUpdate(),
+      onConfirm: ConfirmBtnState.canConfirm(scheduleAsync, _draftDay, remoteDay)
+          ? _confirmUpdate
+          : null,
     );
   }
 }

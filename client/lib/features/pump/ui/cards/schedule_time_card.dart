@@ -53,6 +53,13 @@ class _ScheduleTimeCardState extends ConsumerState<ScheduleTimeCard> {
     final displayTimeText =
         '${displayHour.toString().padLeft(2, '0')}:${displayMin.toString().padLeft(2, '0')}';
 
+    final bool isTimeChanged =
+        _tempHour != null &&
+        (_tempHour != currentHour || _tempMinute != currentMin);
+    final bool isBusy =
+        scheduleAsync.isLoading || scheduleAsync.hasError || isLoading;
+    final bool canSave = isTimeChanged && !isBusy;
+
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       elevation: 4,
@@ -94,15 +101,18 @@ class _ScheduleTimeCardState extends ConsumerState<ScheduleTimeCard> {
             ),
             const SizedBox(height: 16),
             ConfirmButton(
-              onPressed: (_tempHour == null || scheduleAsync.isLoading)
+              onPressed: !canSave
                   ? null
                   : () async {
                       await ref
                           .read(scheduleProvider.notifier)
                           .updateTime(displayHour, displayMin);
-                      setState(() => _tempHour = _tempMinute = null);
+                      setState(() {
+                        _tempHour = null;
+                        _tempMinute = null;
+                      });
                     },
-              isLoading: scheduleAsync.isLoading || isLoading,
+              isLoading: isBusy,
             ),
           ],
         ),

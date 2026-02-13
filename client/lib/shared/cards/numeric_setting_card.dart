@@ -9,7 +9,7 @@ class NumericSettingCard extends StatelessWidget {
   final int min;
   final int max;
   final bool isLoading;
-  final VoidCallback onConfirm;
+  final VoidCallback? onConfirm;
   final VoidCallback onIncrement;
   final VoidCallback onDecrement;
 
