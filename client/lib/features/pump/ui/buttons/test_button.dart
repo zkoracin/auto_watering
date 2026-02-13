@@ -6,10 +6,12 @@ class TestButton extends ConsumerWidget {
     super.key,
     required this.isLoading,
     required this.onPressed,
+    this.btnText = 'Test',
   });
 
   final bool isLoading;
   final VoidCallback onPressed;
+  final String btnText;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -22,7 +24,7 @@ class TestButton extends ConsumerWidget {
               height: 18,
               child: CircularProgressIndicator(strokeWidth: 2),
             )
-          : const Text('Test'),
+          : Text(btnText),
     );
   }
 }

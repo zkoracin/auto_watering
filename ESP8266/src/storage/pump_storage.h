@@ -17,7 +17,7 @@ public:
   }
 
   void loadRuntime() {
-    runtime = Storage.read<uint16_t>(EEPROM_ADDR_PUMP_SECONDS, PUMP_DEFAULT_RUNTIME_SECONDS);
+    runtime = Storage.read<uint16_t>(EEPROM_ADDR_PUMP_SECONDS, minRuntime);
   }
 
   void saveRuntime() {
@@ -29,11 +29,21 @@ public:
   }
 
   void setSchedule(const ScheduleEntry& entry) {
-    schedule = entry;
+    schedule.hour = entry.hour;
+    schedule.minute = entry.minute;
+    schedule.interval = constrain(entry.interval.length, entry.interval.min, entry.interval.max);
+    schedule.startDay = (entry.startDay >= 1 && entry.startDay <= 7) ? entry.startDay : 1;
   }
 
   void loadSchedule() {
     schedule = Storage.read<ScheduleEntry>(EEPROM_ADDR_PUMP_SCHEDULE);
+    if (schedule.interval.length < schedule.interval.min ||
+        schedule.interval.length > schedule.interval.max) {
+      schedule.interval = schedule.interval.min;
+      schedule.hour = 8;
+      schedule.minute = 0;
+      schedule.startDay = 1;
+    }
   }
 
   void saveSchedule() {
@@ -41,8 +51,8 @@ public:
   }
 
 private:
-  uint16_t runtime = PUMP_DEFAULT_RUNTIME_SECONDS;
-  uint16_t minRuntime = PUMP_MIN_RUNTIME_SECONDS;
+  uint16_t runtime = PUMP_MIN_RUNTIME_SECONDS;
+  uint8_t minRuntime = PUMP_MIN_RUNTIME_SECONDS;
   uint16_t maxRuntime = PUMP_MAX_RUNTIME_SECONDS;
   ScheduleEntry schedule;
 };

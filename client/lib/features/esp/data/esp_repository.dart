@@ -22,7 +22,6 @@ class EspRepository {
     );
   }
 
-  //@TODO First fetch the time from the esp then set it up if needed
   Future<EspTime> setTime(EspTime time) {
     return _api.post(
       '$_basePath/time',
