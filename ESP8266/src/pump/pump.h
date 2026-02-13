@@ -13,6 +13,7 @@ inline void pumpInit() {
 }
 
 inline void pumpSet(bool on) {
+  LOG_INFO("PUMP", "PUMP SET START: " + on);
   pumpOn = on;
   digitalWrite(PUMP_PIN, on ? HIGH : LOW);
   if (!on) {

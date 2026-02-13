@@ -16,8 +16,11 @@ void sendPumpSchedule(ESP8266WebServer& server, const ScheduleEntry& schedule) {
   JsonDocument doc;
   doc["hour"] = schedule.hour;
   doc["minute"] = schedule.minute;
-  doc["interval"] = schedule.interval;
   doc["startDay"] = schedule.startDay;
+  JsonObject interval = doc["interval"].to<JsonObject>();
+  interval["length"] = schedule.interval.length;
+  interval["min"] = schedule.interval.min;
+  interval["max"] = schedule.interval.max;
   sendJson(server, 200, doc);
 }
 
@@ -89,13 +92,14 @@ inline void registerPumpRoutes(ESP8266WebServer& server) {
   server.on("/pump/schedule", HTTP_PUT, [&server]() {
     LOG_INFO("SERVER", "PUT PUMP/SCHEDULE");
     JsonDocument doc;
-    if (!validateJsonBody(server, doc, {"startDay", "hour", "minute", "interval"})) {
+    if (!validateJsonBody(server, doc, {"startDay", "hour", "minute", "intervalLength"})) {
       LOG_INFO("SERVER", "PUT PUMP/SCHEDULE not valid request");
       return;
     }
+    uint8_t intervalLength = doc["intervalLength"];
     ScheduleEntry schedule{.hour = doc["hour"],
                            .minute = doc["minute"],
-                           .interval = doc["interval"],
+                           .interval = ScheduleInterval(intervalLength),
                            .startDay = doc["startDay"]};
 
     pump.setSchedule(schedule);

@@ -42,7 +42,7 @@ class ScheduleOverviewCard extends ConsumerWidget {
                 style: const TextStyle(fontSize: 16),
               ),
               Text(
-                'Interval: ${scheduleAsync.value?.interval ?? 0} days',
+                'Interval: ${scheduleAsync.value?.interval.length ?? 0} days',
                 style: const TextStyle(fontSize: 16),
               ),
               Text(

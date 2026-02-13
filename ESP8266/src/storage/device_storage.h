@@ -8,7 +8,9 @@ public:
     return deviceTime;
   }
   void setDeviceTime(const DeviceTime& time) {
-    deviceTime = time;
+    deviceTime.day = (time.day >= 1 && time.day <= 7) ? time.day : 1;
+    deviceTime.hour = (time.hour <= 23) ? time.hour : 0;
+    deviceTime.minute = (time.minute <= 59) ? time.minute : 0;
   }
 
   void loadDeviceTime() {

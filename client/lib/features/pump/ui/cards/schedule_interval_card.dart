@@ -12,13 +12,11 @@ class ScheduleIntervalCard extends ConsumerStatefulWidget {
 }
 
 class _ScheduleIntervalCardState extends ConsumerState<ScheduleIntervalCard> {
-  static const int _minInterval = 1;
-  static const int _maxInterval = 14;
   int? _draftInterval;
 
-  void _updateDraft(int newValue) {
+  void _updateDraft(int min, int max, int newValue) {
     setState(() {
-      _draftInterval = newValue.clamp(_minInterval, _maxInterval);
+      _draftInterval = newValue.clamp(min, max);
     });
   }
 
@@ -34,21 +32,31 @@ class _ScheduleIntervalCardState extends ConsumerState<ScheduleIntervalCard> {
   @override
   Widget build(BuildContext context) {
     final scheduleAsync = ref.watch(scheduleProvider);
-    final remoteInterval = scheduleAsync.value?.interval;
-    final displayValue = _draftInterval ?? remoteInterval ?? _minInterval;
-    final isLoading =
-        scheduleAsync.value?.loadingFields.contains('interval') ?? false;
+
+    final schedule = scheduleAsync.value;
+    final remoteInterval = schedule?.interval;
+
+    final min = remoteInterval?.min ?? 1;
+    final max = remoteInterval?.max ?? 7;
+
+    final currentLength = remoteInterval?.length ?? min;
+    final displayValue = _draftInterval ?? currentLength;
+
+    final isProcessing =
+        scheduleAsync.isLoading ||
+        scheduleAsync.hasError ||
+        (schedule?.loadingFields.contains('interval') ?? false);
 
     return NumericSettingCard(
       title: 'Current Scheduled Interval',
-      description: 'Pump will run every ${remoteInterval ?? _minInterval} days',
+      description: 'Pump will run every $currentLength days',
       value: displayValue,
-      min: _minInterval,
-      max: _maxInterval,
+      min: min,
+      max: max,
       // @TODO NEED TO HANDLE INVALID FROM THE SERVER FOR ALL THE BUTTONS
-      isLoading: scheduleAsync.isLoading || isLoading || scheduleAsync.hasError,
-      onIncrement: () => _updateDraft(displayValue + 1),
-      onDecrement: () => _updateDraft(displayValue - 1),
+      isLoading: isProcessing,
+      onIncrement: () => _updateDraft(min, max, displayValue + 1),
+      onDecrement: () => _updateDraft(min, max, displayValue - 1),
       onConfirm: _confirmUpdate,
     );
   }

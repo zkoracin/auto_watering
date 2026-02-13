@@ -8,11 +8,13 @@
 #include "storage/device_storage.h"
 #include "storage/pump_storage.h"
 #include "device/device_clock.h"
+#include "pump/pump_scheduler.h"
 
 StorageManager Storage;
 DeviceStorage device;
 DeviceClock deviceClock;
 PumpStorage pump;
+PumpScheduler pumpScheduler;
 
 ESP8266WebServer server(80);
 
@@ -40,6 +42,9 @@ void setup() {
   pumpInit();
   LOG_INFO("PUMP", "PUMP INITIALIZED");
 
+  pumpScheduler.begin();
+  LOG_INFO("SCHEDULER", "SCHEDULER INITIALIZED");
+
   connectWiFi();
 
   registerRoutes(server);
@@ -51,5 +56,6 @@ void setup() {
 void loop() {
   server.handleClient();
   deviceClock.updateTime();
+  pumpScheduler.update();
   pumpUpdate();
 }

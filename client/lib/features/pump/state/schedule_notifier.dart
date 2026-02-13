@@ -12,8 +12,8 @@ class ScheduleNotifier extends AsyncNotifier<Schedule> {
     return _repo.getSchedule();
   }
 
-  Future<void> updateInterval(int interval) async {
-    final updated = state.value!.copyWith(interval: interval);
+  Future<void> updateInterval(int intervalLength) async {
+    final updated = state.value!.copyWith(intervalLength: intervalLength);
     await _updateField('interval', updated);
   }
 
