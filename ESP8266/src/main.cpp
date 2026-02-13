@@ -7,9 +7,11 @@
 #include "storage/storage_manager.h"
 #include "storage/device_storage.h"
 #include "storage/pump_storage.h"
+#include "device/device_clock.h"
 
 StorageManager Storage;
 DeviceStorage device;
+DeviceClock deviceClock;
 PumpStorage pump;
 
 ESP8266WebServer server(80);
@@ -28,6 +30,9 @@ void setup() {
   LOG_INFO("STORAGE", String("DEVICE TIME: ") + "day=" + dt.day + ", hour=" + dt.hour +
                           ", minute=" + dt.minute);
 
+  LOG_INFO("CLOCK", "STARTING DEVICE CLOCK");
+  deviceClock.begin();
+
   LOG_INFO("STORAGE", "LOADING PUMP RUNTIME");
   pump.loadRuntime();
   LOG_INFO("STORAGE", "PUMP RUNTIME: " + pump.getRuntime());
@@ -45,5 +50,6 @@ void setup() {
 
 void loop() {
   server.handleClient();
+  deviceClock.updateTime();
   pumpUpdate();
 }

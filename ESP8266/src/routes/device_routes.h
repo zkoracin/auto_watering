@@ -5,6 +5,7 @@
 #include "core/cors.h"
 #include "core/json_utils.h"
 #include "storage/device_storage.h"
+#include "device/device_clock.h"
 
 void sendDeviceTime(ESP8266WebServer& server, const DeviceTime& dt) {
   JsonDocument doc;
@@ -26,7 +27,7 @@ inline void registerDeviceRoutes(ESP8266WebServer& server) {
 
   server.on("/device/time", HTTP_GET, [&server]() {
     LOG_INFO("SERVER", "GET DEVICE/TIME");
-    sendDeviceTime(server, device.getDeviceTime());
+    sendDeviceTime(server, deviceClock.getTime());
   });
 
   server.on("/device/time", HTTP_POST, [&server]() {
@@ -42,6 +43,6 @@ inline void registerDeviceRoutes(ESP8266WebServer& server) {
     device.setDeviceTime(newTime);
     device.saveDeviceTime();
 
-    sendDeviceTime(server, device.getDeviceTime());
+    sendDeviceTime(server, deviceClock.getTime());
   });
 }

@@ -13,9 +13,10 @@ public:
 
   void loadDeviceTime() {
     deviceTime = Storage.read<DeviceTime>(EEPROM_ADDR_DEVICE_TIME);
-    // If uninitialized, reset to day 0, 00:00
-    if (deviceTime.day == 0xFFFF) {
-      deviceTime.day = 0;
+    // reset to day 1, 00:00
+    if (deviceTime.day < 1 || deviceTime.day > 7 || deviceTime.hour > 23 ||
+        deviceTime.minute > 59) {
+      deviceTime.day = 1;
       deviceTime.hour = 0;
       deviceTime.minute = 0;
     }
