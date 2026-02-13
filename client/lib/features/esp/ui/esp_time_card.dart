@@ -28,7 +28,7 @@ class EspTimeCard extends ConsumerWidget {
       text: displayText,
       btnText: mode == PageMode.status ? 'Refresh' : 'Sync',
       isLoading: statusAsync.isLoading || statusAsync.isRefreshing,
-      onRefresh: () => _handleAction(ref),
+      onRefresh: statusAsync.hasError ? null : () => _handleAction(ref),
     );
   }
 
@@ -46,11 +46,10 @@ class EspTimeCard extends ConsumerWidget {
   }
 
   void _handleAction(WidgetRef ref) {
-    final notifier = ref.read(espTimeNotifierProvider.notifier);
     if (mode == PageMode.status) {
-      notifier.refresh();
+      ref.invalidate(espTimeNotifierProvider);
     } else {
-      notifier.updateEspTime();
+      ref.read(espTimeNotifierProvider.notifier).updateEspTime();
     }
   }
 }

@@ -14,7 +14,7 @@ class StatusCard extends StatelessWidget {
   final Icon icon;
   final String text;
   final bool isLoading;
-  final VoidCallback onRefresh;
+  final VoidCallback? onRefresh;
   final String btnText;
 
   @override

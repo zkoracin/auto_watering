@@ -4,13 +4,10 @@ import 'package:client/features/pump/domain/schedule.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class ScheduleNotifier extends AsyncNotifier<Schedule> {
-  late final PumpRepository _repo;
+  PumpRepository get _repository => ref.read(pumpRepositoryProvider);
 
   @override
-  Future<Schedule> build() async {
-    _repo = ref.read(pumpRepositoryProvider);
-    return _repo.getSchedule();
-  }
+  Future<Schedule> build() async => _repository.getSchedule();
 
   Future<void> updateInterval(int intervalLength) async {
     final updated = state.value!.copyWith(intervalLength: intervalLength);
@@ -36,7 +33,7 @@ class ScheduleNotifier extends AsyncNotifier<Schedule> {
       ),
     );
     state = await AsyncValue.guard(() async {
-      final result = await _repo.updateSchedule(updatedModel);
+      final result = await _repository.updateSchedule(updatedModel);
       return result.copyWith(
         loadingFields: {...result.loadingFields}..remove(fieldName),
       );

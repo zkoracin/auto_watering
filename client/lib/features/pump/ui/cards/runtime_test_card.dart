@@ -24,7 +24,8 @@ class RuntimeTestCard extends ConsumerWidget {
           remainingSeconds > 0 ? StatusState.testing : StatusState.success,
     );
 
-    final isRunning = pumpTest.isLoading || remainingSeconds > 0;
+    final isRunning =
+        pumpTest.isLoading || remainingSeconds > 0 || runtime.isLoading;
 
     String btnText = 'Pump should run for $seconds seconds';
     if (!pumpTest.hasError && remainingSeconds > 0) {
@@ -33,16 +34,20 @@ class RuntimeTestCard extends ConsumerWidget {
     if (pumpTest.hasError) {
       btnText = 'Pump test failed, cannot connect to pump';
     }
+    final effectiveState = runtime.hasError ? StatusState.failure : state;
     return StatusCard(
-      icon: state.icon(colorScheme, StatusContext.pump),
+      icon: effectiveState.icon(colorScheme, StatusContext.pump),
       text: btnText,
       isLoading: isRunning,
-      onRefresh: () async {
-        await ref.read(runtimeTestProvider.notifier).runTest();
-        if (!ref.read(runtimeTestProvider).hasError) {
-          ref.read(countdownProvider.notifier).start(seconds);
-        }
-      },
+      onRefresh: (isRunning || pumpTest.hasError || runtime.hasError)
+          ? null
+          : () async {
+              await ref.read(runtimeTestProvider.notifier).runTest();
+
+              if (!ref.read(runtimeTestProvider).hasError) {
+                ref.read(countdownProvider.notifier).start(seconds);
+              }
+            },
     );
   }
 }

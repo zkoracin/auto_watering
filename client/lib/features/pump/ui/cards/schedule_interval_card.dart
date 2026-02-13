@@ -1,5 +1,6 @@
 import 'package:client/features/pump/data/pump_providers.dart';
 import 'package:client/shared/cards/numeric_setting_card.dart';
+import 'package:client/shared/confirm_btn_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -44,7 +45,6 @@ class _ScheduleIntervalCardState extends ConsumerState<ScheduleIntervalCard> {
 
     final isProcessing =
         scheduleAsync.isLoading ||
-        scheduleAsync.hasError ||
         (schedule?.loadingFields.contains('interval') ?? false);
 
     return NumericSettingCard(
@@ -53,11 +53,17 @@ class _ScheduleIntervalCardState extends ConsumerState<ScheduleIntervalCard> {
       value: displayValue,
       min: min,
       max: max,
-      // @TODO NEED TO HANDLE INVALID FROM THE SERVER FOR ALL THE BUTTONS
       isLoading: isProcessing,
       onIncrement: () => _updateDraft(min, max, displayValue + 1),
       onDecrement: () => _updateDraft(min, max, displayValue - 1),
-      onConfirm: _confirmUpdate,
+      onConfirm:
+          ConfirmBtnState.canConfirm(
+            scheduleAsync,
+            _draftInterval,
+            remoteInterval?.length,
+          )
+          ? _confirmUpdate
+          : null,
     );
   }
 }
