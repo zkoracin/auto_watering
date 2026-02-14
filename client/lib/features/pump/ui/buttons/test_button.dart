@@ -15,15 +15,25 @@ class TestButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final disabled = isLoading || onPressed == null;
+    final theme = Theme.of(context);
+    final bool isDisabled = isLoading || onPressed == null;
+
     return ElevatedButton(
-      onPressed: disabled ? null : onPressed,
-      style: ElevatedButton.styleFrom(minimumSize: const Size(80, 36)),
+      onPressed: isDisabled ? null : onPressed,
+      style: ElevatedButton.styleFrom(
+        minimumSize: const Size(0, 40),
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+      ),
       child: isLoading
-          ? const SizedBox(
-              width: 18,
-              height: 18,
-              child: CircularProgressIndicator(strokeWidth: 2),
+          ? SizedBox(
+              width: 20,
+              height: 20,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  theme.colorScheme.onPrimary,
+                ),
+              ),
             )
           : Text(btnText),
     );
