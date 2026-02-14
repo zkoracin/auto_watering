@@ -1,8 +1,8 @@
 import 'package:client/features/esp/data/esp_providers.dart';
 import 'package:client/shared/cards/status_card.dart';
-import 'package:client/shared/constants/day_names.dart';
 import 'package:client/shared/constants/page_modes.dart';
 import 'package:client/shared/constants/status_state.dart';
+import 'package:client/shared/time_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -36,10 +36,12 @@ class EspTimeCard extends ConsumerWidget {
     final baseText = state.text(StatusContext.espTime);
 
     if (state == StatusState.success && value != null) {
-      final day = value.day ?? 1;
-      final hour = value.hour.toString().padLeft(2, '0');
-      final minute = value.minute.toString().padLeft(2, '0');
-      return '$baseText : ${dayNames[day]} $hour:$minute';
+      final formatted = TimeUtils.formatDayAndTime(
+        value.day,
+        value.hour,
+        value.minute,
+      );
+      return '$baseText : $formatted';
     }
 
     return baseText;

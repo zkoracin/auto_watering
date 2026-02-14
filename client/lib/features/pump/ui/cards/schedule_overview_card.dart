@@ -1,15 +1,11 @@
 import 'package:client/shared/constants/day_names.dart';
+import 'package:client/shared/time_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:client/features/pump/data/pump_providers.dart';
 
 class ScheduleOverviewCard extends ConsumerWidget {
   const ScheduleOverviewCard({super.key});
-
-  String _formatTime(int? hour, int? minute) {
-    if (hour == null || minute == null) return '--:--';
-    return '${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}';
-  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -38,7 +34,7 @@ class ScheduleOverviewCard extends ConsumerWidget {
               ),
               const SizedBox(height: 12),
               Text(
-                'Start Time: ${_formatTime(scheduleAsync.value?.hour, scheduleAsync.value?.minute)}',
+                'Start Time: ${TimeUtils.formatClockTime(scheduleAsync.value?.hour, scheduleAsync.value?.minute)}',
                 style: const TextStyle(fontSize: 16),
               ),
               Text(

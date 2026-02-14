@@ -1,4 +1,5 @@
 import 'package:client/features/pump/data/pump_providers.dart';
+import 'package:client/shared/time_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:client/shared/buttons/increment_button.dart';
 import 'package:client/shared/buttons/confirm_button.dart';
@@ -47,11 +48,8 @@ class _ScheduleTimeCardState extends ConsumerState<ScheduleTimeCard> {
     final isLoading =
         scheduleAsync.value?.loadingFields.contains('time') ?? false;
 
-    final currentTimeText =
-        '${currentHour.toString().padLeft(2, '0')}:${currentMin.toString().padLeft(2, '0')}';
-
-    final displayTimeText =
-        '${displayHour.toString().padLeft(2, '0')}:${displayMin.toString().padLeft(2, '0')}';
+    final currentTimeText = TimeUtils.formatClockTime(currentHour, currentMin);
+    final displayTimeText = TimeUtils.formatClockTime(displayHour, displayMin);
 
     final bool isTimeChanged =
         _tempHour != null &&
