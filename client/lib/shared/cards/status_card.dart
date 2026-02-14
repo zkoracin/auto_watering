@@ -9,6 +9,8 @@ class StatusCard extends StatelessWidget {
     required this.isLoading,
     required this.onRefresh,
     this.btnText = 'Test',
+    this.showButton = true,
+    this.textColor,
   });
 
   final Widget icon;
@@ -16,6 +18,8 @@ class StatusCard extends StatelessWidget {
   final bool isLoading;
   final VoidCallback? onRefresh;
   final String btnText;
+  final bool showButton;
+  final Color? textColor;
 
   @override
   Widget build(BuildContext context) {
@@ -40,8 +44,7 @@ class StatusCard extends StatelessWidget {
         _buildIcon(theme),
         const SizedBox(width: 16),
         Expanded(child: _buildText(theme)),
-        const SizedBox(width: 8),
-        _buildButton(),
+        if (showButton) ...[const SizedBox(width: 8), _buildButton()],
       ],
     );
   }
@@ -58,8 +61,7 @@ class StatusCard extends StatelessWidget {
             Expanded(child: _buildText(theme)),
           ],
         ),
-        const SizedBox(height: 16),
-        _buildButton(),
+        if (showButton) ...[const SizedBox(height: 16), _buildButton()],
       ],
     );
   }
@@ -73,7 +75,7 @@ class StatusCard extends StatelessWidget {
     text,
     style: theme.textTheme.bodyLarge?.copyWith(
       fontWeight: FontWeight.bold,
-      color: theme.colorScheme.primary,
+      color: textColor ?? theme.colorScheme.primary,
     ),
   );
 

@@ -26,9 +26,11 @@ class EspTimeCard extends ConsumerWidget {
     return StatusCard(
       icon: state.icon(colorScheme, StatusContext.espTime),
       text: displayText,
+      textColor: state == StatusState.failure ? colorScheme.error : null,
+      showButton: state != StatusState.failure,
       btnText: mode == PageMode.status ? 'Refresh' : 'Sync',
       isLoading: statusAsync.isLoading || statusAsync.isRefreshing,
-      onRefresh: statusAsync.hasError ? null : () => _handleAction(ref),
+      onRefresh: () => _handleAction(ref),
     );
   }
 

@@ -20,6 +20,8 @@ class ConnectionCard extends ConsumerWidget {
     return StatusCard(
       icon: state.icon(colorScheme, StatusContext.espConnection),
       text: state.text(StatusContext.espConnection),
+      textColor: state == StatusState.failure ? colorScheme.error : null,
+      showButton: true,
       isLoading: espStatus.isLoading || espStatus.isRefreshing,
       onRefresh: () => ref.read(espStatusNotifierProvider.notifier).refresh(),
     );

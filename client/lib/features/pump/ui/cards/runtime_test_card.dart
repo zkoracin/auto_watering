@@ -15,31 +15,30 @@ class RuntimeTestCard extends ConsumerWidget {
     final pumpTest = ref.watch(runtimeTestProvider);
     final remainingSeconds = ref.watch(countdownProvider);
 
-    int seconds = runtime.value?.seconds ?? 2;
-
-    final state = pumpTest.maybeMap(
-      loading: (_) => StatusState.testing,
-      error: (_) => StatusState.failure,
-      orElse: () =>
-          remainingSeconds > 0 ? StatusState.testing : StatusState.success,
-    );
-
+    final hasError = runtime.hasError || pumpTest.hasError;
     final isRunning =
-        pumpTest.isLoading || remainingSeconds > 0 || runtime.isLoading;
+        runtime.isLoading || pumpTest.isLoading || remainingSeconds > 0;
 
+    final state = hasError
+        ? StatusState.failure
+        : (isRunning ? StatusState.testing : StatusState.success);
+
+    int seconds = runtime.value?.seconds ?? 2;
     String btnText = 'Pump should run for $seconds seconds';
-    if (!pumpTest.hasError && remainingSeconds > 0) {
-      btnText = 'Pump running... $remainingSeconds s left';
+
+    if (hasError) {
+      btnText = 'Cannot connect to pump';
+    } else if (remainingSeconds > 0) {
+      btnText = 'Pump running... ${remainingSeconds}s left';
     }
-    if (pumpTest.hasError) {
-      btnText = 'Pump test failed, cannot connect to pump';
-    }
-    final effectiveState = runtime.hasError ? StatusState.failure : state;
+
     return StatusCard(
-      icon: effectiveState.icon(colorScheme, StatusContext.pump),
+      icon: state.icon(colorScheme, StatusContext.pump),
       text: btnText,
+      textColor: state == StatusState.failure ? colorScheme.error : null,
+      showButton: !hasError,
       isLoading: isRunning,
-      onRefresh: (isRunning || pumpTest.hasError || runtime.hasError)
+      onRefresh: (isRunning || hasError)
           ? null
           : () async {
               await ref.read(runtimeTestProvider.notifier).runTest();
