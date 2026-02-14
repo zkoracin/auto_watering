@@ -1,22 +1,21 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
-  // Brand
-  static const Color primary = Color(0xFF4CAF7A);
-  static const Color primaryLight = Color(0xFFE6F4EE);
+  // Brand Colors
+  static const Color primaryBlue = Color(0xFF0277BD);
+  static const Color accentTeal = Color(0xFF26A69A);
 
-  // Accents
-  static const Color waterBlue = Color(0xFF6BB7F5);
-  static const Color waterBlueLight = Color(0xFFE9F4FF);
+  // Status Colors
+  static const Color powerOn = Color(0xFF4CAF50);
+  static const Color powerOff = Color(0xFFE53935);
+  static const Color warning = Color(0xFFFFA000);
 
-  // Backgrounds & surfaces
-  static const Color surface = Color(0xFFFFFFFF);
-  static const Color card = Color(0xFFF2F2F2);
+  // Background & Surface
+  static const Color background = Color(0xFFF8FAFC);
+  static const Color surface = Colors.white;
+  static const Color cardShadow = Color(0x0F000000);
 
   // Text
-  static const Color textPrimary = Color(0xFF1C1C1E);
-  static const Color textSecondary = Color(0xFF8E8E93);
-
-  // Status
-  static const Color error = Color(0xFFE53935);
+  static const Color textPrimary = Color(0xFF1A1C1E);
+  static const Color textSecondary = Color(0xFF42474E);
 }
