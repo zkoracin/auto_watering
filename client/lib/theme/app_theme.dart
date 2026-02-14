@@ -67,6 +67,13 @@ class AppTheme {
         type: BottomNavigationBarType.fixed,
         elevation: 10,
       ),
+      iconButtonTheme: IconButtonThemeData(
+        style: IconButton.styleFrom(
+          backgroundColor: AppColors.primaryBlue,
+          foregroundColor: Colors.white,
+          fixedSize: const Size(44, 44),
+        ),
+      ),
     );
   }
 }
