@@ -71,7 +71,10 @@ class StatusCard extends StatelessWidget {
 
   Widget _buildText(ThemeData theme) => Text(
     text,
-    style: theme.textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w600),
+    style: theme.textTheme.bodyLarge?.copyWith(
+      fontWeight: FontWeight.bold,
+      color: theme.colorScheme.primary,
+    ),
   );
 
   Widget _buildButton() => SizedBox(

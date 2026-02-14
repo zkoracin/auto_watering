@@ -11,6 +11,7 @@ class AppTheme {
         primary: AppColors.primaryBlue,
         secondary: AppColors.accentTeal,
         surface: AppColors.surface,
+        error: AppColors.powerOff,
       ),
 
       // Typography
@@ -63,8 +64,7 @@ class AppTheme {
           fontWeight: FontWeight.w400,
           fontSize: 12,
         ),
-        type: BottomNavigationBarType
-            .fixed,
+        type: BottomNavigationBarType.fixed,
         elevation: 10,
       ),
     );

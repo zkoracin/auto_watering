@@ -7,7 +7,7 @@ class AppColors {
 
   // Status Colors
   static const Color powerOn = Color(0xFF4CAF50);
-  static const Color powerOff = Color(0xFFE53935);
+  static const Color powerOff = Color(0xFFE57373);
   static const Color warning = Color(0xFFFFA000);
 
   // Background & Surface
