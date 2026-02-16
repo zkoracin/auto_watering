@@ -12,6 +12,7 @@ class NumericSettingCard extends StatelessWidget {
   final VoidCallback? onConfirm;
   final VoidCallback onIncrement;
   final VoidCallback onDecrement;
+  final bool hasError;
 
   const NumericSettingCard({
     super.key,
@@ -24,50 +25,70 @@ class NumericSettingCard extends StatelessWidget {
     required this.onConfirm,
     required this.onIncrement,
     required this.onDecrement,
+    required this.hasError,
   });
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final textTheme = theme.textTheme;
+
     return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      elevation: 4,
       margin: const EdgeInsets.symmetric(vertical: 8),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              title,
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              description,
-              style: const TextStyle(fontSize: 14, color: Colors.grey),
-            ),
-            const SizedBox(height: 16),
             Row(
               children: [
-                IncrementButton(icon: Icons.remove, onTap: onDecrement),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Center(
-                    child: Text(
-                      value.toString(),
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w600,
+                Text(
+                  title,
+                  style: textTheme.bodyLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: hasError
+                        ? theme.colorScheme.error
+                        : theme.colorScheme.primary,
+                  ),
+                ),
+              ],
+            ),
+            if (!hasError) ...[
+              const SizedBox(height: 4),
+              Text(
+                description,
+                style: const TextStyle(fontSize: 14, color: Colors.grey),
+              ),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  IncrementButton(
+                    icon: Icons.remove,
+                    onTap: value > min ? onDecrement : null,
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Center(
+                      child: Text(
+                        value.toString(),
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
                   ),
-                ),
-                const SizedBox(width: 16),
-                IncrementButton(icon: Icons.add, onTap: onIncrement),
-              ],
-            ),
-            const SizedBox(height: 16),
-            ConfirmButton(isLoading: isLoading, onPressed: onConfirm),
+                  const SizedBox(width: 16),
+                  IncrementButton(
+                    icon: Icons.add,
+                    onTap: value < max ? onIncrement : null,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              ConfirmButton(isLoading: isLoading, onPressed: onConfirm),
+            ],
           ],
         ),
       ),

@@ -36,7 +36,6 @@ class _ScheduleIntervalCardState extends ConsumerState<ScheduleIntervalCard> {
 
     final schedule = scheduleAsync.value;
     final remoteInterval = schedule?.interval;
-
     final min = remoteInterval?.min ?? 1;
     final max = remoteInterval?.max ?? 7;
 
@@ -46,14 +45,18 @@ class _ScheduleIntervalCardState extends ConsumerState<ScheduleIntervalCard> {
     final isProcessing =
         scheduleAsync.isLoading ||
         (schedule?.loadingFields.contains('interval') ?? false);
+    final hasError = scheduleAsync.hasError;
 
     return NumericSettingCard(
-      title: 'Current Scheduled Interval',
+      title: hasError
+          ? 'Schedule interval unavailable'
+          : 'Current scheduled interval',
       description: 'Pump will run every $currentLength days',
       value: displayValue,
       min: min,
       max: max,
       isLoading: isProcessing,
+      hasError: hasError,
       onIncrement: () => _updateDraft(min, max, displayValue + 1),
       onDecrement: () => _updateDraft(min, max, displayValue - 1),
       onConfirm:
