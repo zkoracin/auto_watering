@@ -19,6 +19,6 @@ class WateringApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(theme: AppTheme.light, home: const TabsPage());
+    return MaterialApp(theme: AppTheme.lightTheme, home: const TabsPage());
   }
 }

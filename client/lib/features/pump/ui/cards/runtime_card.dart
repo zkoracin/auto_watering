@@ -32,18 +32,21 @@ class _RuntimeCardState extends ConsumerState<RuntimeCard> {
   @override
   Widget build(BuildContext context) {
     final runtimeAsync = ref.watch(runtimeProvider);
-    final remoteRuntime = runtimeAsync.value?.seconds;
-    final remoteMin = runtimeAsync.value?.min ?? 2;
-    final remoteMax = runtimeAsync.value?.max ?? 14;
+    final runtime = runtimeAsync.value;
+    final remoteRuntime = runtime?.seconds;
+    final remoteMin = runtime?.min ?? 2;
+    final remoteMax = runtime?.max ?? 14;
     final displayValue = _draftRuntime ?? remoteRuntime ?? remoteMin;
+    final hasError = runtimeAsync.hasError;
 
     return NumericSettingCard(
-      title: 'Current Run Time',
+      title: hasError ? 'Runtime unavailable' : 'Current runtime',
       description:
           'This means that when the pump is turned on, it will run for ${remoteRuntime ?? remoteMin} seconds',
       value: displayValue,
       min: remoteMin,
       max: remoteMax,
+      hasError: hasError,
       isLoading: runtimeAsync.isLoading,
       onIncrement: () => _updateDraft(remoteMin, remoteMax, (displayValue + 1)),
       onDecrement: () => _updateDraft(remoteMin, remoteMax, (displayValue - 1)),

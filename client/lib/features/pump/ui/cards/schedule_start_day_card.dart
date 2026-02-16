@@ -41,13 +41,16 @@ class _ScheduleStartDayCardState extends ConsumerState<ScheduleStartDayCard> {
     final isLoading =
         scheduleAsync.value?.loadingFields.contains('startDay') ?? false;
 
+    final hasError = scheduleAsync.hasError;
+
     return NumericSettingCard(
-      title: 'Pump Start Day',
+      title: hasError ? 'Pump start day unavailable' : 'Pump Start Day',
       description: 'Pump will start on ${dayNames[remoteDay ?? _min]}',
       value: displayValue,
       min: _min,
       max: _max,
       isLoading: scheduleAsync.isLoading || isLoading,
+      hasError: hasError,
       onIncrement: () => _updateDraft(displayValue + 1),
       onDecrement: () => _updateDraft(displayValue - 1),
       onConfirm: ConfirmBtnState.canConfirm(scheduleAsync, _draftDay, remoteDay)

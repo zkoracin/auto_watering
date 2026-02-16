@@ -34,15 +34,18 @@ class _TabsPageState extends State<TabsPage> {
         onTap: _selectPage,
         items: const [
           BottomNavigationBarItem(
-            icon: Icon(Icons.water_drop),
+            icon: Icon(Icons.water_drop_outlined),
+            activeIcon: Icon(Icons.water_drop),
             label: 'Status',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.schedule),
+            icon: Icon(Icons.schedule_outlined),
+            activeIcon: Icon(Icons.schedule),
             label: 'Scheduler',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
+            icon: Icon(Icons.settings_outlined),
+            activeIcon: Icon(Icons.settings),
             label: 'Settings',
           ),
         ],
